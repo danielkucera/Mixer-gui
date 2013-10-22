@@ -16,10 +16,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
-    connect(ui->checkBox_2, SIGNAL(stateChanged(int)), this, SLOT(startCapture(int)));
-    connect(ui->checkBox_3, SIGNAL(stateChanged(int)), this, SLOT(startPreview(int)));
+    connect(ui->enableInput0, SIGNAL(stateChanged(int)), this, SLOT(startCapture(int)));
+    connect(ui->preview0, SIGNAL(stateChanged(int)), this, SLOT(startPreview(int)));
 
-    connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), this, SLOT(handleSlider(int)));
+
+    connect(ui->checkBox_4, SIGNAL(stateChanged(int)), this, SLOT(startFader(int)));
+    connect(ui->checkBox_5, SIGNAL(stateChanged(int)), this, SLOT(faderPreview(int)));
+    connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), this, SLOT(controlChanged(int)));
+    connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(controlClicked()));
+    connect(ui->pushButton_3, SIGNAL(released()), this, SLOT(controlClicked()));
 
 }
 
@@ -28,33 +33,49 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setName(const QString &name)
-{
-    ui->lineEdit->setText(name);
+void MainWindow::controlClicked(){
+    QWidget* sndr = (QWidget *)sender();
+    QString name = sndr->objectName();
+    fprintf (stderr,"%s sender\n",sndr->objectName().toStdString().c_str());
+
+    if(name.contains("pushButton_3")){
+        ui->horizontalSlider->setValue(100);
+    }
+
+    if(name.contains("pushButton_2")){
+        ui->horizontalSlider->setValue(0);
+    }
+
+
 }
 
-QString MainWindow::name() const
-{
-    return ui->lineEdit->text();
+void MainWindow::controlChanged(int value){
+    QWidget* sndr = (QWidget *)sender();
+    QString name = sndr->objectName();
+    fprintf (stderr,"%s sender\n",sndr->objectName().toStdString().c_str());
+
+    if(name.contains("horizontalSlider")){
+        fad->rate=value;
+    }
+
 }
 
 void MainWindow::startCapture(int state)
 {
     if (state==2){
-    // change the text
-    //printf("%s",ui->lineEdit->text().toLocal8Bit().data());
-    ui->lineEdit_2->setText(ui->lineEdit->text());
+
+
     foo[1] = new Capture("/dev/video0",640,480);
 
-    ui->checkBox_3->setEnabled(true);
+    ui->ctrlFrame0->setEnabled(true);
 
     if (!foo[1]->initialized){
         //delete foo[1];
-        fprintf(stderr,"haluz\n");
     }
         }
     if (state==0){
-            ui->checkBox_3->setEnabled(false);
+            ui->centralWidget->findChild<QFrame *>("ctrlFrame0")->setEnabled(false);
+
     }
 
 }
@@ -64,32 +85,38 @@ void MainWindow::startPreview(int state)
     if (state==2){
         prev[1] = new Preview(foo[1]->buffer,foo[1]->buf_len, 10, 640,480);
 
-        ui->checkBox_2->setEnabled(false);
+        }
+    if (state==0){
+        prev[1]->~Preview();
+
+        }
+
+}
+
+void MainWindow::faderPreview(int state)
+{
+    if (state==2){
+        prev[8] = new Preview(fad->out,fad->buf_len, 10, 640,480);
 
         }
     if (state==0){
         //delete prev[1];
-        prev[1]->~Preview();
-
-        ui->checkBox_2->setEnabled(true);
+        prev[8]->~Preview();
 
         }
-    // resize button
-    //m_button->resize(100,100);
 }
 
-void MainWindow::handleSlider(int value)
+
+void MainWindow::startFader(int state)
 {
-    char buffer [50];
-    // change the text
-    //printf("%s",ui->lineEdit->text().toLocal8Bit().data());
+    if (state==2){
+        fad = new Fader(foo[1]->buf_len, foo[1]->buffer, foo[1]->buffer, 25);
 
-    sprintf (buffer,"%d chars long\n",value);
+        }
+    if (state==0){
 
+        }
 
-
-    ui->lineEdit_2->setText(buffer);
-    // resize button
-    //m_button->resize(100,100);
 }
+
 

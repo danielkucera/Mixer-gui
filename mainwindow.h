@@ -6,6 +6,7 @@
 #include <QSlider>
 #include "capture.h"
 #include "preview.h"
+#include "fader.h"
 
 namespace Ui {
 class MainWindow;
@@ -25,7 +26,10 @@ public:
 private slots:
     void startCapture(int state);
     void startPreview(int state);
-    void handleSlider(int);
+    void startFader(int);
+    void faderPreview(int state);
+    void controlClicked();
+    void controlChanged(int value);
 
     
 private:
@@ -33,6 +37,7 @@ private:
     QPushButton *m_button;
     Capture* foo[10];
     Preview* prev[10];
+    Fader* fad;
 };
 
 #endif // MAINWINDOW_H

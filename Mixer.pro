@@ -25,4 +25,5 @@ HEADERS  += mainwindow.h \
     preview.h \
     fader.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    input.ui
