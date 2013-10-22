@@ -31,12 +31,7 @@ Preview::Preview(void * i_buffer, int i_buf_len, int i_fps, int i_width, int i_h
     //std::thread test;
     //test->(Thread);
 
-    PreviewThread* thr = new PreviewThread();
-    thr->start();
-
-
-
-    //pthread_create(&thread, NULL, Preview::staticEntryPoint, this);
+    pthread_create(&thread, NULL, Preview::staticEntryPoint, this);
 
 }
 
@@ -54,10 +49,10 @@ void * Preview::staticEntryPoint(void * c)
 
 
 
-void PreviewThread::run(){
+void Preview::Thread(){
 
     //printf("output thread started\n");
-    while (Preview::run) {
+    while (run) {
 
         usleep(1000*1000/fps);
 

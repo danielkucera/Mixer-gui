@@ -53,8 +53,10 @@ void MainWindow::startCapture(int state)
         fprintf(stderr,"haluz\n");
     }
         }
-    // resize button
-    //m_button->resize(100,100);
+    if (state==0){
+            ui->checkBox_3->setEnabled(false);
+    }
+
 }
 
 void MainWindow::startPreview(int state)

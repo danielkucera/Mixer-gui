@@ -26,12 +26,4 @@ private:
     bool run;
 };
 
-class PreviewThread : public QThread
-{
-    Q_OBJECT
-
-protected:
-    void run();
-};
-
 #endif // PREVIEW_H
