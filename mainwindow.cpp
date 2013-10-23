@@ -26,6 +26,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(controlClicked()));
     connect(ui->pushButton_3, SIGNAL(released()), this, SLOT(controlClicked()));
 
+    test=new Test();
+    test->show();
+
 }
 
 MainWindow::~MainWindow()

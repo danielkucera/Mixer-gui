@@ -7,6 +7,7 @@
 #include "capture.h"
 #include "preview.h"
 #include "fader.h"
+#include "test.h"
 
 namespace Ui {
 class MainWindow;
@@ -38,6 +39,8 @@ private:
     Capture* foo[10];
     Preview* prev[10];
     Fader* fad;
+
+    Test* test;
 };
 
 #endif // MAINWINDOW_H

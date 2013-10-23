@@ -18,12 +18,15 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     capture.cpp \
     preview.cpp \
-    fader.cpp
+    fader.cpp \
+    test.cpp
 
 HEADERS  += mainwindow.h \
     capture.h \
     preview.h \
-    fader.h
+    fader.h \
+    test.h
 
 FORMS    += mainwindow.ui \
-    input.ui
+    input.ui \
+    test.ui
