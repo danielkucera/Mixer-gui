@@ -6,204 +6,49 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>683</width>
-    <height>514</height>
+    <width>176</width>
+    <height>288</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Mixer by danman</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QGroupBox" name="video0">
+   <widget class="QPushButton" name="captureButton">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>0</y>
-      <width>161</width>
-      <height>221</height>
+      <y>10</y>
+      <width>101</width>
+      <height>27</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <family>Sans Serif</family>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
+    <property name="text">
+     <string>Capture...</string>
     </property>
-    <property name="title">
-     <string>/dev/video0</string>
-    </property>
-    <widget class="QCheckBox" name="enableInput0">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>98</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>capture</string>
-     </property>
-    </widget>
-    <widget class="QFrame" name="ctrlFrame0">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>141</width>
-       <height>131</height>
-      </rect>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <widget class="QRadioButton" name="switchB0">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>100</y>
-        <width>117</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>RadioButton</string>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroup_2</string>
-      </attribute>
-     </widget>
-     <widget class="QRadioButton" name="switchA0">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>60</y>
-        <width>117</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>RadioButton</string>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
-      </attribute>
-     </widget>
-     <widget class="QCheckBox" name="preview0">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>98</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>preview</string>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </widget>
    </widget>
-   <widget class="QGroupBox" name="faderBox">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
+   <widget class="QComboBox" name="choosePreview">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>240</y>
-      <width>281</width>
-      <height>131</height>
+      <x>20</x>
+      <y>50</y>
+      <width>101</width>
+      <height>27</height>
      </rect>
     </property>
-    <property name="title">
-     <string>fader</string>
+   </widget>
+   <widget class="QPushButton" name="faderButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>90</y>
+      <width>101</width>
+      <height>27</height>
+     </rect>
     </property>
-    <widget class="QSlider" name="horizontalSlider">
-     <property name="geometry">
-      <rect>
-       <x>50</x>
-       <y>50</y>
-       <width>181</width>
-       <height>29</height>
-      </rect>
-     </property>
-     <property name="maximum">
-      <number>100</number>
-     </property>
-     <property name="pageStep">
-      <number>10</number>
-     </property>
-     <property name="value">
-      <number>0</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>90</y>
-       <width>99</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>switch A</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_3">
-     <property name="geometry">
-      <rect>
-       <x>170</x>
-       <y>90</y>
-       <width>99</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>switch B</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="checkBox_4">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>20</y>
-       <width>59</width>
-       <height>18</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>enable</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="checkBox_5">
-     <property name="geometry">
-      <rect>
-       <x>170</x>
-       <y>20</y>
-       <width>65</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>preview</string>
-     </property>
-    </widget>
+    <property name="text">
+     <string>Fader...</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -211,8 +56,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>683</width>
-     <height>23</height>
+     <width>176</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>
@@ -229,8 +74,4 @@
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_2"/>
- </buttongroups>
 </ui>

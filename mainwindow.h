@@ -8,6 +8,7 @@
 #include "preview.h"
 #include "fader.h"
 #include "test.h"
+#include "buffer.h"
 
 namespace Ui {
 class MainWindow;
@@ -25,22 +26,15 @@ public:
     QString name() const;
 
 private slots:
-    void startCapture(int state);
-    void startPreview(int state);
-    void startFader(int);
-    void faderPreview(int state);
-    void controlClicked();
-    void controlChanged(int value);
+    void startCapture();
+    void startPreview(int index);
+    void startFader();
 
     
 private:
     Ui::MainWindow *ui;
-    QPushButton *m_button;
-    Capture* foo[10];
-    Preview* prev[10];
-    Fader* fad;
 
-    Test* test;
+    Buffer* buffer;
 };
 
 #endif // MAINWINDOW_H

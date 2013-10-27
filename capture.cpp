@@ -1,24 +1,57 @@
 #include "capture.h"
-#include "stdio.h"
+#include "ui_capture.h"
 
-
-Capture::Capture(char* dev_name, int widt, int heigh)
+Capture::Capture(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::Capture)
 {
+    ui->setupUi(this);
+    this->setAttribute(Qt::WA_DeleteOnClose, true);
 
-	width=widt;
-	height=heigh;
+    connect(ui->enableInput, SIGNAL(stateChanged(int)), this, SLOT(handleCheckbox(int)));
 
-    buf_len = width*height*4;
+    QDir path("/dev");
+    QStringList files = path.entryList(QDir::System).filter("video");
 
-	//init_read:
-        buffer = malloc(buf_len);
+    ui->inputName->addItems(files);
 
-        if (!buffer) {
-                fprintf(stderr, "Out of memory\n");
-                return;
-        }
+}
 
-	//open_device
+Capture::~Capture()
+{
+    stopCapture();
+
+    delete ui;
+}
+
+void Capture::handleCheckbox(int status){
+    if (status==2){
+        startCapture();
+    } else {
+        stopCapture();
+    }
+}
+
+
+void Capture::Init(Buffer* buf)
+{
+    buffer = buf;
+}
+
+void Capture::startCapture(){
+
+    outnum = ui->outputNumber->value();
+
+    window = buffer->Open(outnum);
+
+    char* dev_name;
+    dev_name = ui->inputName->currentText().prepend("/dev/").toLocal8Bit().data();
+
+    fprintf(stderr, "opening %s\n", dev_name);
+
+    //init_read:
+
+    //open_device
         struct stat st;
 
         if (-1 == stat(dev_name, &st)) {
@@ -40,7 +73,7 @@ Capture::Capture(char* dev_name, int widt, int heigh)
                 return;
         }
 
-	//init_device:
+    //init_device:
         struct v4l2_capability cap;
         struct v4l2_cropcap cropcap;
         struct v4l2_crop crop;
@@ -62,9 +95,14 @@ Capture::Capture(char* dev_name, int widt, int heigh)
                 exit(EXIT_FAILURE);
         }
 
+        if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
+                fprintf(stderr, "%s does not support streaming i/o\n", dev_name);
+                return;
+        }
+
         if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
                 fprintf(stderr, "%s does not support read i/o\n", dev_name);
-                exit(EXIT_FAILURE);
+                return;
         }
         //select video input, standard(not used) and tuner(not used) here
         cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -85,16 +123,16 @@ Capture::Capture(char* dev_name, int widt, int heigh)
                 }
         }
 
-	//CLEAR
+    //CLEAR
         memset (&(fmt), 0, sizeof (fmt));
 
-        //set image properties
+        //set image properties    this->setAttribute(Qt::WA_DeleteOnClose, true);
         fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        fmt.fmt.pix.width = width;
-        fmt.fmt.pix.height = height;
+        fmt.fmt.pix.width = buffer->width;
+        fmt.fmt.pix.height = buffer->height;
         //fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;
         //fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUV420;
-        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB32;
 //      fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB565;
         fmt.fmt.pix.colorspace = V4L2_COLORSPACE_SRGB;
         fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
@@ -140,10 +178,29 @@ Capture::Capture(char* dev_name, int widt, int heigh)
 
 //	pthread_t thread;
 //	Capture c;
-	pthread_create(&thread, NULL, Capture::staticEntryPoint, this);
+        run=1;
 
-    initialized = 1;
+    pthread_create(&thread, NULL, Capture::staticEntryPoint, this);
 
+//    while (run){
+//        usleep(1000*1000);
+//        ui->frameCount->setPlainText(QString::number(buffer->frame[outnum]));
+//    }
+
+    //potom nakoniec toto
+    ui->ctrlFrame->setEnabled(false);
+
+}
+
+void Capture::stopCapture(){
+
+    run=0;
+
+    usleep(200*1000);
+
+    ::close(fd);
+
+    ui->ctrlFrame->setEnabled(true);
 
 }
 
@@ -153,19 +210,21 @@ void * Capture::staticEntryPoint(void * c)
     return NULL;
 }
 
-void * Capture::loop() 
+void * Capture::loop()
 {
         fd_set fds;
         struct timeval tv;
-	int r;
+    int r;
 
-        for (;;) {
+    while (run) {
                 /* needed for select timeout */
                 tv.tv_sec = 2;
                 tv.tv_usec = 0;
 
                 FD_ZERO(&fds);
                 FD_SET(fd, &fds);
+
+                //fprintf(stderr, "laaala %d\n", fd);
 
                 //the classic select function, who allows to wait up to 2 seconds, until we have captured data,
                 r = select(fd + 1, &fds, NULL, NULL, &tv);
@@ -178,11 +237,18 @@ void * Capture::loop()
 
                 if (0 == r) {
                         fprintf(stderr, "select timeout\n");
-                        exit(EXIT_FAILURE);
+                        stopCapture();
+                        return 0;
                 }
 
                 //read one frame from the device and put on the buffer
                 read_frame();
+
+                buffer->frame[outnum]++;
+
+                if (buffer->frame[outnum] % 80 == 0){
+
+                }
 
         }
 }
@@ -206,7 +272,9 @@ int Capture::xioctl(int request, void *arg) {
 int Capture::read_frame() {
 //	int *errno; // co to je naco?
 
-        if (-1 == read(fd, buffer - 1, buf_len)) {
+        read(fd, window, 1);  //jeden sprosty bajt...
+
+        if (-1 == read(fd, window, buffer->buf_len)) {
                 switch (errno) {
                 case EAGAIN:
                         return 0;
@@ -215,9 +283,9 @@ int Capture::read_frame() {
                         //EIO ignored
                 default:
                 //        logerr("read")
-			return 1;
+            return 1;
                 }
-                return 0; 
+                return 0;
         }
 
 //      while (width*height*Bpp != read (*fd, buffers[0].start, buffers[0].length))
@@ -227,4 +295,3 @@ int Capture::read_frame() {
 
         return 1;
 }
-

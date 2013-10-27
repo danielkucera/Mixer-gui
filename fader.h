@@ -1,26 +1,50 @@
 #ifndef FADER_H
 #define FADER_H
 
-#include <pthread.h>
-#include <stdlib.h>
+#include <QMainWindow>
+#include "buffer.h"
 #include "unistd.h"
-#include <cstring>
+#include <cmath>
 
-class Fader
+namespace Ui {
+class Fader;
+}
+
+class Fader : public QMainWindow
 {
+    Q_OBJECT
+    
 public:
-    Fader(int, void *i_a, void *i_b, int i_fps);
-    void * a;
-    void * b;
-    void * out;
-    int rate;
-    int buf_len;
+    explicit Fader(QWidget *parent = 0);
+    ~Fader();
 
+    void Init(Buffer* buffer);
+    void setRate(int rate);
+
+
+    
 private:
+    Ui::Fader *ui;
+    float rate;
+    float rateSup;
+    Buffer* buffer;
+    void start();
+    int pos;
+    int run;
+
     pthread_t thread;
     void Thread();
     static void * staticEntryPoint(void * c);
-    int fps;
+
+    unsigned char* a;
+    unsigned char* b;
+    unsigned char* out;
+
+private slots:
+
+    void controlClicked();
+    void controlChanged(int value);
+
 };
 
 #endif // FADER_H

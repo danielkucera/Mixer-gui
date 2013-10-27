@@ -1,6 +1,13 @@
 #ifndef CAPTURE_H
 #define CAPTURE_H
 
+#include <QWidget>
+#include <QDir>
+#include "preview.h"
+#include <unistd.h> // close
+#include "buffer.h"
+
+//precisti:
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,18 +23,32 @@
 #include <linux/videodev2.h>
 #include <time.h>               //profiling
 
+namespace Ui {
+class Capture;
+}
 
-class Capture
+class Capture : public QWidget
 {
+    Q_OBJECT
+    
 public:
-    Capture(char*, int, int);
-    int width;
-    int height;
-    void * buffer;
-    size_t buf_len;
-    int initialized=0;
+    explicit Capture(QWidget *parent = 0);
+    ~Capture();
 
+    void Init(Buffer *buf);
+
+    Buffer* buffer;
+    
 private:
+    Ui::Capture *ui;
+    void* window;
+    void startCapture();
+    void stopCapture();
+    int run;
+    int outnum;
+
+
+
     int fd;
     pthread_t thread;
     int xioctl(int, void*);
@@ -35,6 +56,9 @@ private:
     static void * staticEntryPoint(void * c);
     void * loop();
     void logerr(const char *);
+
+private slots:
+    void handleCheckbox(int status);
 
 };
 

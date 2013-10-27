@@ -1,29 +1,38 @@
 #ifndef PREVIEW_H
 #define PREVIEW_H
 
-#include "stdio.h"
+#include <QMainWindow>
+#include "buffer.h"
 #include "unistd.h"
-#include <pthread.h>
-#include <thread>
-#include <string>
-#include <QThread>
 
-class Preview
+namespace Ui {
+class Preview;
+}
+
+class Preview : public QMainWindow
 {
+    Q_OBJECT
+    
 public:
-    Preview(void *buffer, int buf_len, int fps, int width, int height);
+    explicit Preview(QWidget *parent = 0);
     ~Preview();
+
+    void start(Buffer* buf, int number);
+
+    
 private:
+    Ui::Preview *ui;
+
     pthread_t thread;
     void Thread();
     static void * staticEntryPoint(void * c);
-    void * buffer;
-    int buf_len;
-    int fps;
-    int width;
-    int height;
+
+    Buffer* buffer;
+    int number;
+
     FILE *fp;
     bool run;
+
 };
 
 #endif // PREVIEW_H
