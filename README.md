@@ -1,6 +1,5 @@
 # INSTALATION
 sudo apt-get install libqt4-dev mplayer
-
 make
 
 # ToDO
