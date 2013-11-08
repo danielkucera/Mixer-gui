@@ -1,8 +1,8 @@
-INSTALATION
+# INSTALATION
 sudo apt-get install libqt4-dev mplayer
 make
 
-ToDO
+# ToDO
 * HTTP remote controll
 * MJPEG capture
 * Preview input select
