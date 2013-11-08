@@ -1,6 +1,6 @@
 # INSTALATION
-sudo apt-get install libqt4-dev mplayer
-make
+* sudo apt-get install libqt4-dev mplayer
+* make
 
 # ToDO
 * HTTP remote controll
