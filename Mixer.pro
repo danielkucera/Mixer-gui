@@ -20,14 +20,16 @@ SOURCES += main.cpp\
     capture.cpp \
     buffer.cpp \
     preview.cpp \
-    fader.cpp
+    fader.cpp \
+    save.cpp
 
 HEADERS  += mainwindow.h \
     test.h \
     capture.h \
     buffer.h \
     preview.h \
-    fader.h
+    fader.h \
+    save.h
 
 FORMS    += mainwindow.ui \
     input.ui \

@@ -9,6 +9,7 @@
 #include "fader.h"
 #include "test.h"
 #include "buffer.h"
+#include "save.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +30,7 @@ private slots:
     void startCapture();
     void startPreview(int index);
     void startFader();
+    void saveBuffer(int index);
 
     
 private:

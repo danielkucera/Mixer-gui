@@ -41,7 +41,7 @@ void Preview::start(Buffer *buf, int numbe)
 //      pipe (fp);
 
     char cmd[300];
-    sprintf(cmd, "mplayer -demuxer rawvideo - -rawvideo w=%d:h=%d:format=rgb32 -wid %d -name TEST 2>/dev/null >/dev/null",buffer->width,buffer->height, ui->centralwidget->winId());
+    sprintf(cmd, "mplayer -demuxer rawvideo - -rawvideo w=%d:h=%d:format=rgb24 -wid %d -name TEST 2>/dev/null >/dev/null",buffer->width,buffer->height, ui->centralwidget->winId());
 
     fp = popen(cmd, "we");
 
@@ -78,7 +78,7 @@ void Preview::Thread(){
 
             //          if (fp){
             //memcpy(output.start, buffers[out].start, len);
-        fwrite(input, 1, buffer->buf_len, fp);
+        fwrite(input+0, 1, buffer->buf_len, fp);
 //                      } else {
             //                  fp = popen("cat > /tmp/kokosy", "w");
 //                      }

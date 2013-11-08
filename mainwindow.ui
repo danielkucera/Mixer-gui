@@ -50,6 +50,16 @@
      <string>Fader...</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="saveBuffer">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>130</y>
+      <width>101</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

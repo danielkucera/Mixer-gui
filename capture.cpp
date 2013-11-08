@@ -33,148 +33,24 @@ void Capture::handleCheckbox(int status){
 }
 
 
-void Capture::Init(Buffer* buf)
+void Capture::Init(Buffer* bufin)
 {
-    buffer = buf;
+    buf = bufin;
 }
 
 void Capture::startCapture(){
 
+
+
     outnum = ui->outputNumber->value();
 
-    window = buffer->Open(outnum);
+    out_buf = buf->Open(outnum);
 
-    char* dev_name;
     dev_name = ui->inputName->currentText().prepend("/dev/").toLocal8Bit().data();
 
-    fprintf(stderr, "opening %s\n", dev_name);
-
-    //init_read:
-
-    //open_device
-        struct stat st;
-
-        if (-1 == stat(dev_name, &st)) {
-                fprintf(stderr, "Cannot identify '%s': %d, %s\n", dev_name, errno,
-                                strerror(errno));
-                return;
-        }
-
-        if (!S_ISCHR(st.st_mode)) {
-                fprintf(stderr, "%s is no device\n", dev_name);
-                return;
-        }
-
-        fd = open(dev_name, O_RDWR /* required */| O_NONBLOCK, 0);
-
-        if (-1 == fd) {
-                fprintf(stderr, "Cannot open '%s': %d, %s\n", dev_name, errno,
-                                strerror(errno));
-                return;
-        }
-
-    //init_device:
-        struct v4l2_capability cap;
-        struct v4l2_cropcap cropcap;
-        struct v4l2_crop crop;
-        struct v4l2_format fmt;
-        unsigned int min;
-
-        if (-1 == xioctl(VIDIOC_QUERYCAP, &cap)) {
-                if (EINVAL == errno) {
-                        fprintf(stderr, "%s is no V4L2 device\n", dev_name);
-                        return;
-                } else {
-                        logerr("VIDIOC_QUERYCAP");
-                        return;
-                }
-        }
-
-        if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
-                fprintf(stderr, "%s is not a video capture device\n", dev_name);
-                exit(EXIT_FAILURE);
-        }
-
-        if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
-                fprintf(stderr, "%s does not support streaming i/o\n", dev_name);
-                return;
-        }
-
-        if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
-                fprintf(stderr, "%s does not support read i/o\n", dev_name);
-                return;
-        }
-        //select video input, standard(not used) and tuner(not used) here
-        cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        if (-1 == xioctl(VIDIOC_CROPCAP, &cropcap)) {
-                /* Errors ignored. */
-        }
-        crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        crop.c = cropcap.defrect; /* reset to default */
-
-        if (-1 == xioctl(VIDIOC_S_CROP, &crop)) {
-                switch (errno) {
-                case EINVAL:
-                        /* Cropping not supported. */
-                        break;
-                default:
-                        /* Errors ignored. */
-                        break;
-                }
-        }
-
-    //CLEAR
-        memset (&(fmt), 0, sizeof (fmt));
-
-        //set image properties    this->setAttribute(Qt::WA_DeleteOnClose, true);
-        fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        fmt.fmt.pix.width = buffer->width;
-        fmt.fmt.pix.height = buffer->height;
-        //fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;
-        //fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUV420;
-        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB32;
-//      fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB565;
-        fmt.fmt.pix.colorspace = V4L2_COLORSPACE_SRGB;
-        fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
-
-        /*      switch (pixel_format)
-         {
-         case 0:
-         fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUV420;
-         break;
-         case 1:
-         fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB565;
-         break;
-         case 2:
-         fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB32;
-         break;
-         }
-
-         fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB565; //lasdlalsdaslda
-         */
-
-        if (-1 == xioctl(VIDIOC_S_FMT, &fmt)){
-                logerr("VIDIOC_S_FMT");
-                return;
-        }
-
-
-        /* Note VIDIOC_S_FMT may change width and height. */
-
-        //check the configuration data
-        min = fmt.fmt.pix.width * 2;
-        if (fmt.fmt.pix.bytesperline < min)
-                fmt.fmt.pix.bytesperline = min;
-        min = fmt.fmt.pix.bytesperline * fmt.fmt.pix.height;
-        if (fmt.fmt.pix.sizeimage < min)
-                fmt.fmt.pix.sizeimage = min;
-
-        fprintf(stderr, "Video bytespreline = %d\n", fmt.fmt.pix.bytesperline);
-        fprintf(stderr, "Using READ IO Method\n");
-//      buffers=init_read (fmt.fmt.pix.sizeimage);
-
-//      return buffers;
-//        return fmt.fmt.pix.sizeimage;
+    open_device();
+    init_device();
+    start_capturing();
 
 //	pthread_t thread;
 //	Capture c;
@@ -198,7 +74,9 @@ void Capture::stopCapture(){
 
     usleep(200*1000);
 
-    ::close(fd);
+    stop_capturing();
+    uninit_device();
+    close_device();
 
     ui->ctrlFrame->setEnabled(true);
 
@@ -212,45 +90,45 @@ void * Capture::staticEntryPoint(void * c)
 
 void * Capture::loop()
 {
-        fd_set fds;
-        struct timeval tv;
-    int r;
+    unsigned int count;
+
+    buf->frame[outnum]=0;
 
     while (run) {
-                /* needed for select timeout */
-                tv.tv_sec = 2;
-                tv.tv_usec = 0;
 
-                FD_ZERO(&fds);
-                FD_SET(fd, &fds);
+        buf->frame[outnum]++;
 
-                //fprintf(stderr, "laaala %d\n", fd);
+            for (;;) {
+                    fd_set fds;
+                    struct timeval tv;
+                    int r;
 
-                //the classic select function, who allows to wait up to 2 seconds, until we have captured data,
-                r = select(fd + 1, &fds, NULL, NULL, &tv);
+                    FD_ZERO(&fds);
+                    FD_SET(fd, &fds);
 
-                if (-1 == r) { //error
-                        if (EINTR == errno)
-                                continue;
-                        logerr("select");
-                }
+                    /* Timeout. */
+                    tv.tv_sec = 2;
+                    tv.tv_usec = 0;
 
-                if (0 == r) {
-                        fprintf(stderr, "select timeout\n");
-                        stopCapture();
-                        return 0;
-                }
+                    r = select(fd + 1, &fds, NULL, NULL, &tv);
 
-                //read one frame from the device and put on the buffer
-                read_frame();
+                    if (-1 == r) {
+                            if (EINTR == errno)
+                                    continue;
+                            logerr("select");
+                    }
 
-                buffer->frame[outnum]++;
+                    if (0 == r) {
+                            fprintf(stderr, "select timeout\n");
+                            exit(EXIT_FAILURE);
+                    }
 
-                if (buffer->frame[outnum] % 80 == 0){
+                    if (read_frame())
+                            break;
+                    /* EAGAIN - continue select loop. */
+            }
+    }
 
-                }
-
-        }
 }
 
 void Capture::logerr(const char *s) {
@@ -258,40 +136,556 @@ void Capture::logerr(const char *s) {
         //exit(EXIT_FAILURE);
 }
 
+void Capture::open_device()
+{
+        struct stat st;
+
+        if (-1 == stat(dev_name, &st)) {
+                fprintf(stderr, "Cannot identify '%s': %d, %s\n",
+                         dev_name, errno, strerror(errno));
+                exit(EXIT_FAILURE);
+        }
+
+        if (!S_ISCHR(st.st_mode)) {
+                fprintf(stderr, "%s is no device\n", dev_name);
+                exit(EXIT_FAILURE);
+        }
+
+        fd = open(dev_name, O_RDWR /* required */ | O_NONBLOCK, 0);
+
+        if (-1 == fd) {
+                fprintf(stderr, "Cannot open '%s': %d, %s\n",
+                         dev_name, errno, strerror(errno));
+                exit(EXIT_FAILURE);
+        }
+}
+
 //a blocking wrapper of the ioctl function
-int Capture::xioctl(int request, void *arg) {
+int Capture::xioctl(int fh, int request, void *arg)
+{
         int r;
 
-        do
-                r = ioctl(fd, request, arg);
-        while (-1 == r && EINTR == errno);
+        do {
+                r = ioctl(fh, request, arg);
+        } while (-1 == r && EINTR == errno);
 
         return r;
 }
 
-int Capture::read_frame() {
-//	int *errno; // co to je naco?
+void Capture::stop_capturing(void)
+{
+        enum v4l2_buf_type type;
 
-        read(fd, window, 1);  //jeden sprosty bajt...
+        switch (io) {
+        case IO_METHOD_READ:
+                /* Nothing to do. */
+                break;
 
-        if (-1 == read(fd, window, buffer->buf_len)) {
-                switch (errno) {
-                case EAGAIN:
-                        return 0;
+        case IO_METHOD_MMAP:
+        case IO_METHOD_USERPTR:
+                type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                if (-1 == xioctl(fd, VIDIOC_STREAMOFF, &type))
+                        logerr("VIDIOC_STREAMOFF");
+                break;
+        }
+}
 
-                case EIO:
-                        //EIO ignored
-                default:
-                //        logerr("read")
-            return 1;
+void Capture::init_device(void)
+{
+        struct v4l2_capability cap;
+        struct v4l2_cropcap cropcap;
+        struct v4l2_crop crop;
+        struct v4l2_format fmt;
+        unsigned int min;
+
+        if (-1 == xioctl(fd, VIDIOC_QUERYCAP, &cap)) {
+                if (EINVAL == errno) {
+                        fprintf(stderr, "%s is no V4L2 device\n",
+                                 dev_name);
+                        exit(EXIT_FAILURE);
+                } else {
+                        logerr("VIDIOC_QUERYCAP");
                 }
-                return 0;
         }
 
-//      while (width*height*Bpp != read (*fd, buffers[0].start, buffers[0].length))
-//      {
-//              usleep(100);
-//      }
+        if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
+                fprintf(stderr, "%s is no video capture device\n",
+                         dev_name);
+                exit(EXIT_FAILURE);
+        }
+/*
+        switch (io) {
+        case IO_METHOD_READ:
+                if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
+                        fprintf(stderr, "%s does not support read i/o\n",
+                                 dev_name);
+                        exit(EXIT_FAILURE);
+                }
+                break;
 
-        return 1;
+        case IO_METHOD_MMAP:
+        case IO_METHOD_USERPTR:
+                if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
+                        fprintf(stderr, "%s does not support streaming i/o\n",
+                                 dev_name);
+                        exit(EXIT_FAILURE);
+                }
+                break;
+        }
+*/
+        if ((cap.capabilities & V4L2_CAP_READWRITE)) {
+                fprintf(stderr, "%s does support read i/o\n", dev_name);
+                io = IO_METHOD_READ;
+        } else if (cap.capabilities & V4L2_CAP_STREAMING) {
+            fprintf(stderr, "%s does support streaming i/o\n", dev_name);
+            io = IO_METHOD_USERPTR;
+        }
+
+        /* Select video input, video standard and tune here. */
+
+
+        CLEAR(cropcap);
+
+        cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+        if (0 == xioctl(fd, VIDIOC_CROPCAP, &cropcap)) {
+                crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                crop.c = cropcap.defrect; /* reset to default */
+
+                if (-1 == xioctl(fd, VIDIOC_S_CROP, &crop)) {
+                        switch (errno) {
+                        case EINVAL:
+                                /* Cropping not supported. */
+                                break;
+                        default:
+                                /* Errors ignored. */
+                                break;
+                        }
+                }
+        } else {
+                /* Errors ignored. */
+        }
+
+
+        CLEAR(fmt);
+
+        fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        if (1) { //force_format
+                fmt.fmt.pix.width       = buf->width;
+                fmt.fmt.pix.height      = buf->height;
+                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;
+                fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
+
+                if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
+                        logerr("VIDIOC_S_FMT");
+
+                /* Note VIDIOC_S_FMT may change width and height. */
+        } else {
+                /* Preserve original settings as set by v4l2-ctl for example */
+                if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt))
+                        logerr("VIDIOC_G_FMT");
+        }
+
+        fprintf(stderr,"pixelformat %d w:%d h:%d buf_len: %d\n",fmt.fmt.pix.pixelformat, fmt.fmt.pix.width, fmt.fmt.pix.height, fmt.fmt.pix.sizeimage);
+
+        width = fmt.fmt.pix.width;
+        height = fmt.fmt.pix.height;
+
+        //exit(66);
+
+        /* Buggy driver paranoia. */
+        /*
+        min = fmt.fmt.pix.width * 4;
+        if (fmt.fmt.pix.bytesperline < min)
+                fmt.fmt.pix.bytesperline = min;
+        min = fmt.fmt.pix.bytesperline * fmt.fmt.pix.height;
+        if (fmt.fmt.pix.sizeimage < min)
+                fmt.fmt.pix.sizeimage = min;
+                */
+
+        fprintf(stderr,"sizeimage %d\n",fmt.fmt.pix.sizeimage);
+
+        switch (io) {
+        case IO_METHOD_READ:
+                init_read(fmt.fmt.pix.sizeimage);
+                break;
+
+        case IO_METHOD_MMAP:
+                init_mmap();
+                break;
+
+        case IO_METHOD_USERPTR:
+                init_userp(fmt.fmt.pix.sizeimage);
+                break;
+        }
 }
+
+void Capture::init_read(unsigned int buffer_size)
+{
+        buffers = (buffer_type*)calloc(1, sizeof(*buffers));
+
+        if (!buffers) {
+                fprintf(stderr, "Out of memory\n");
+                exit(EXIT_FAILURE);
+        }
+
+        buffers[0].length = buffer_size;
+        buffers[0].start = malloc(buffer_size);
+
+        if (!buffers[0].start) {
+                fprintf(stderr, "Out of memory\n");
+                exit(EXIT_FAILURE);
+        }
+}
+
+void Capture::init_mmap(void)
+{
+        struct v4l2_requestbuffers req;
+
+        CLEAR(req);
+
+        req.count = 4;
+        req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        req.memory = V4L2_MEMORY_MMAP;
+
+        if (-1 == xioctl(fd, VIDIOC_REQBUFS, &req)) {
+                if (EINVAL == errno) {
+                        fprintf(stderr, "%s does not support memory mapping\n", dev_name);
+                        exit(EXIT_FAILURE);
+                } else {
+                        logerr("VIDIOC_REQBUFS");
+                }
+        }
+
+        if (req.count < 2) {
+                fprintf(stderr, "Insufficient buffer memory on %s\n",
+                         dev_name);
+                exit(EXIT_FAILURE);
+        }
+
+        buffers = (buffer_type*)calloc(req.count, sizeof(*buffers));
+
+        if (!buffers) {
+                fprintf(stderr, "Out of memory\n");
+                exit(EXIT_FAILURE);
+        }
+
+        for (n_buffers = 0; n_buffers < req.count; ++n_buffers) {
+                struct v4l2_buffer buf;
+
+                CLEAR(buf);
+
+                buf.type        = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                buf.memory      = V4L2_MEMORY_MMAP;
+                buf.index       = n_buffers;
+
+                if (-1 == xioctl(fd, VIDIOC_QUERYBUF, &buf))
+                        logerr("VIDIOC_QUERYBUF");
+
+                buffers[n_buffers].length = buf.length;
+                buffers[n_buffers].start =
+                        mmap(NULL /* start anywhere */,
+                              buf.length,
+                              PROT_READ | PROT_WRITE /* required */,
+                              MAP_SHARED /* recommended */,
+                              fd, buf.m.offset);
+
+                if (MAP_FAILED == buffers[n_buffers].start)
+                        logerr("mmap");
+        }
+}
+
+void Capture::init_userp(unsigned int buffer_size)
+{
+        struct v4l2_requestbuffers req;
+
+        CLEAR(req);
+
+        req.count  = 4;
+        req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        req.memory = V4L2_MEMORY_USERPTR;
+
+        if (-1 == xioctl(fd, VIDIOC_REQBUFS, &req)) {
+                if (EINVAL == errno) {
+                        fprintf(stderr, "%s does not support "
+                                 "user pointer i/o\n", dev_name);
+                        exit(EXIT_FAILURE);
+                } else {
+                        logerr("VIDIOC_REQBUFS");
+                }
+        }
+
+        buffers = (buffer_type*)calloc(4, sizeof(*buffers));
+
+        if (!buffers) {
+                fprintf(stderr, "Out of memory\n");
+                exit(EXIT_FAILURE);
+        }
+
+        for (n_buffers = 0; n_buffers < 4; ++n_buffers) {
+                buffers[n_buffers].length = buffer_size;
+                buffers[n_buffers].start = malloc(buffer_size);
+
+                if (!buffers[n_buffers].start) {
+                        fprintf(stderr, "Out of memory\n");
+                        exit(EXIT_FAILURE);
+                }
+        }
+}
+
+void Capture::uninit_device(void)
+{
+        unsigned int i;
+
+        switch (io) {
+        case IO_METHOD_READ:
+                free(buffers[0].start);
+                break;
+
+        case IO_METHOD_MMAP:
+                for (i = 0; i < n_buffers; ++i)
+                        if (-1 == munmap(buffers[i].start, buffers[i].length))
+                                logerr("munmap");
+                break;
+
+        case IO_METHOD_USERPTR:
+                for (i = 0; i < n_buffers; ++i)
+                        free(buffers[i].start);
+                break;
+        }
+
+        free(buffers);
+}
+
+void Capture::start_capturing(void)
+{
+        unsigned int i;
+        enum v4l2_buf_type type;
+
+        switch (io) {
+        case IO_METHOD_READ:
+                /* Nothing to do. */
+                break;
+
+        case IO_METHOD_MMAP:
+                for (i = 0; i < n_buffers; ++i) {
+                        struct v4l2_buffer buf;
+
+                        CLEAR(buf);
+                        buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                        buf.memory = V4L2_MEMORY_MMAP;
+                        buf.index = i;
+
+                        if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
+                                logerr("VIDIOC_QBUF");
+                }
+                type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                if (-1 == xioctl(fd, VIDIOC_STREAMON, &type))
+                        logerr("VIDIOC_STREAMON");
+                break;
+
+        case IO_METHOD_USERPTR:
+                for (i = 0; i < n_buffers; ++i) {
+                        struct v4l2_buffer buf;
+
+                        CLEAR(buf);
+                        buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                        buf.memory = V4L2_MEMORY_USERPTR;
+                        buf.index = i;
+                        buf.m.userptr = (unsigned long)buffers[i].start;
+                        buf.length = buffers[i].length;
+
+                        if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
+                                logerr("VIDIOC_QBUF");
+                }
+                type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                if (-1 == xioctl(fd, VIDIOC_STREAMON, &type))
+                        logerr("VIDIOC_STREAMON");
+                break;
+        }
+}
+void Capture::close_device(void)
+{
+        if (-1 == ::close(fd))
+                logerr("close");
+
+        fd = -1;
+}
+
+int Capture::read_frame() {
+    struct v4l2_buffer buf;
+    unsigned int i;
+
+    switch (io) {
+    case IO_METHOD_READ:
+            if (-1 == read(fd, buffers[0].start, buffers[0].length)) {
+                    switch (errno) {
+                    case EAGAIN:
+                            return 0;
+
+                    case EIO:
+                            /* Could ignore EIO, see spec. */
+
+                            /* fall through */
+
+                    default:
+                            logerr("read");
+                    }
+            }
+
+            process_frame(buffers[0].start, buffers[0].length);
+            break;
+
+    case IO_METHOD_MMAP:
+            CLEAR(buf);
+
+            buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            buf.memory = V4L2_MEMORY_MMAP;
+
+            if (-1 == xioctl(fd, VIDIOC_DQBUF, &buf)) {
+                    switch (errno) {
+                    case EAGAIN:
+                            return 0;
+
+                    case EIO:
+                            /* Could ignore EIO, see spec. */
+
+                            /* fall through */
+
+                    default:
+                            logerr("VIDIOC_DQBUF");
+                    }
+            }
+
+            assert(buf.index < n_buffers);
+
+            process_frame(buffers[buf.index].start, buf.bytesused);
+
+            if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
+                    logerr("VIDIOC_QBUF");
+            break;
+
+    case IO_METHOD_USERPTR:
+            CLEAR(buf);
+
+            buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            buf.memory = V4L2_MEMORY_USERPTR;
+
+            if (-1 == xioctl(fd, VIDIOC_DQBUF, &buf)) {
+                    switch (errno) {
+                    case EAGAIN:
+                            return 0;
+
+                    case EIO:
+                            /* Could ignore EIO, see spec. */
+
+                            /* fall through */
+
+                    default:
+                            logerr("VIDIOC_DQBUF");
+                    }
+            }
+
+            for (i = 0; i < n_buffers; ++i)
+                    if (buf.m.userptr == (unsigned long)buffers[i].start
+                        && buf.length == buffers[i].length)
+                            break;
+
+            assert(i < n_buffers);
+
+            process_frame((void *)buf.m.userptr, buf.bytesused);
+
+            if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
+                    logerr("VIDIOC_QBUF");
+            break;
+    }
+
+    return 1;
+
+}
+
+void Capture::process_frame(void* inp, int length) {
+
+    //memcpy(out_buf,input,length);
+
+    int r1, g1, b1;
+    int r2, g2, b2;
+    uchar y, u, y2, v;
+
+    uchar* input = (uchar*)inp;
+    uchar* output = (uchar*)out_buf;
+    uchar* tmp_buf = (uchar*) malloc(width*height*6);
+//    uchar* tmp_buf = (uchar*)out_buf;
+
+    for (int i=0; i< width*height/2; i++){
+
+        //YUYV
+        y = input[i*4];
+        u = input[i*4+1];
+        y2 = input[i*4+2];
+        v = input[i*4+3];
+
+        //UYVY
+/*
+        u = input[i*4];
+        y = input[i*4+1];
+        v = input[i*4+2];
+        y2 = input[i*4+3];
+*/
+
+        int c = y-16, d = u - 128, e = v - 128;
+
+        r1 = (298 * c           + 409 * e + 128) >> 8;
+        g1 = (298 * c - 100 * d - 208 * e + 128) >> 8;
+        b1 = (298 * c + 516 * d           + 128) >> 8;
+
+        // Even with proper conversion, some values still need clipping.
+
+        if (r1 > 255) r1 = 255;
+        if (g1 > 255) g1 = 255;
+        if (b1 > 255) b1 = 255;
+        if (r1 < 0) r1 = 0;
+        if (g1 < 0) g1 = 0;
+        if (b1 < 0) b1 = 0;
+
+        c = y2-16, d = u - 128, e = v - 128;
+
+        r2 = (298 * c           + 409 * e + 128) >> 8;
+        g2 = (298 * c - 100 * d - 208 * e + 128) >> 8;
+        b2 = (298 * c + 516 * d           + 128) >> 8;
+
+        // Even with proper conversion, some values still need clipping.
+
+        if (r2 > 255) r2 = 255;
+        if (g2 > 255) g2 = 255;
+        if (b2 > 255) b2 = 255;
+        if (r2 < 0) r2 = 0;
+        if (g2 < 0) g2 = 0;
+        if (b2 < 0) b2 = 0;
+
+        tmp_buf[i*6] = r1;
+        tmp_buf[i*6+1] = g1;
+        tmp_buf[i*6+2] = b1;
+
+        tmp_buf[i*6+3] = r2;
+        tmp_buf[i*6+4] = g2;
+        tmp_buf[i*6+5] = b2;
+
+
+
+    }
+
+     //memcpy(buf->Open(2),tmp_buf,640*3*300);
+
+    int maxH = (height<buf->height) ? height : buf->height;
+    int maxW = (width<buf->width) ? width : buf->width;
+
+    for (int m=0; m < maxH; m++){
+        //fprintf(stderr,"riadok %d\n",m);
+        //usleep(100000);
+        memcpy((void*)output+buf->width*m*3,(void*)tmp_buf+width*m*3,maxW*3);
+    }
+
+    free(tmp_buf);
+}
+
