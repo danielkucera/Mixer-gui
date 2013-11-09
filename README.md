@@ -3,6 +3,7 @@
 * make
 
 # ToDO
+* Preview keep aspect
 * HTTP remote controll
 * MJPEG capture
 * Preview input select

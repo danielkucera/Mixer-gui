@@ -41,7 +41,7 @@ void Preview::start(Buffer *buf, int numbe)
 //      pipe (fp);
 
     char cmd[300];
-    sprintf(cmd, "mplayer -demuxer rawvideo - -rawvideo w=%d:h=%d:format=rgb24 -wid %d -name TEST 2>/dev/null >/dev/null",buffer->width,buffer->height, ui->centralwidget->winId());
+    sprintf(cmd, "mplayer -demuxer rawvideo - -rawvideo w=%d:h=%d:format=rgb24 -wid %d 2>/dev/null >/dev/null",buffer->width,buffer->height, ui->centralwidget->winId());
 
     fp = popen(cmd, "we");
 

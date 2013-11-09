@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'preview.h'
 **
-** Created: Fri Oct 25 23:39:56 2013
+** Created: Sat Nov 9 10:37:57 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.4)
 **
 ** WARNING! All changes made in this file will be lost!

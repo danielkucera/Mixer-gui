@@ -7,7 +7,6 @@
 #include "capture.h"
 #include "preview.h"
 #include "fader.h"
-#include "test.h"
 #include "buffer.h"
 #include "save.h"
 

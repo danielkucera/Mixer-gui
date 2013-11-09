@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'capture.ui'
 **
-** Created: Fri Oct 25 23:39:48 2013
+** Created: Sat Nov 9 10:37:24 2013
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

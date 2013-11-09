@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'fader.ui'
 **
-** Created: Sat Oct 26 11:08:01 2013
+** Created: Sat Nov 9 10:37:24 2013
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
