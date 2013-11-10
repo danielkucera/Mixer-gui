@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->captureButton, SIGNAL(released()), this, SLOT(startCapture()));
     connect(ui->faderButton, SIGNAL(released()), this, SLOT(startFader()));
+    connect(ui->loadButton, SIGNAL(released()), this, SLOT(loadImage()));
 
     //preview
     connect(ui->choosePreview, SIGNAL(currentIndexChanged(int)), this, SLOT(startPreview(int)));
@@ -44,6 +45,14 @@ void MainWindow::startCapture()
     cap->Init(buffer);
 
 }
+
+void MainWindow::loadImage()
+{
+    Load* load = new Load();
+    load->Init(buffer);
+    load->show();
+}
+
 
 void MainWindow::startPreview(int index)
 {

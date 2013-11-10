@@ -8,7 +8,7 @@ Preview::Preview(QWidget *parent) :
     ui->setupUi(this);
     this->setAttribute(Qt::WA_DeleteOnClose, true);
 
-    fprintf(stderr,"windid %d\n",ui->centralwidget->winId());
+    fprintf(stderr,"windid %d\n",ui->previewwidget->winId());
 }
 
 Preview::~Preview()
@@ -21,12 +21,49 @@ Preview::~Preview()
 
 }
 
+void Preview::resizeEvent(QResizeEvent* event)
+{
+   QMainWindow::resizeEvent(event);
+
+   if (buffer == 0){
+       return;
+   }
+
+   ui->mainwidget->width();
+
+   int h2 = (ui->mainwidget->width()*buffer->height)/buffer->width;
+   int w2 = (ui->mainwidget->height()*buffer->width)/buffer->height;
+
+   //fprintf(stderr,"inoked ok!\n");
+
+
+   if (h2<ui->mainwidget->height()){
+       w2 = ui->mainwidget->width();
+   } else {
+       h2 = ui->mainwidget->height();
+   }
+
+   ui->previewwidget->setFixedHeight(h2);
+   ui->previewwidget->setFixedWidth(w2);
+
+   QPoint center = ui->previewwidget->parentWidget()->geometry().center();
+
+   center.setX(center.x()-w2/2);
+   center.setY(center.y()-h2/2);
+
+   ui->previewwidget->move(center);
+}
+
 void Preview::start(Buffer *buf, int numbe)
 {
     fp = NULL;
 
     buffer = buf;
     number = numbe;
+
+    QResizeEvent* salam;
+    resizeEvent(salam);
+
 
     setWindowTitle(QString("Buffer %1").arg(numbe));
 
@@ -41,7 +78,7 @@ void Preview::start(Buffer *buf, int numbe)
 //      pipe (fp);
 
     char cmd[300];
-    sprintf(cmd, "mplayer -demuxer rawvideo - -rawvideo w=%d:h=%d:format=rgb24 -wid %d 2>/dev/null >/dev/null",buffer->width,buffer->height, ui->centralwidget->winId());
+    sprintf(cmd, "mplayer -demuxer rawvideo - -rawvideo w=%d:h=%d:format=rgb24 -wid %d 2>/dev/null >/dev/null",buffer->width,buffer->height, ui->previewwidget->winId());
 
     fp = popen(cmd, "we");
 

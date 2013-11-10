@@ -9,6 +9,7 @@
 #include "fader.h"
 #include "buffer.h"
 #include "save.h"
+#include "load.h"
 
 namespace Ui {
 class MainWindow;
@@ -27,6 +28,7 @@ public:
 
 private slots:
     void startCapture();
+    void loadImage();
     void startPreview(int index);
     void startFader();
     void saveBuffer(int index);

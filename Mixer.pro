@@ -20,17 +20,26 @@ SOURCES += main.cpp\
     buffer.cpp \
     preview.cpp \
     fader.cpp \
-    save.cpp
+    save.cpp \
+    load.cpp \
+    overlay.cpp
 
 HEADERS  += mainwindow.h \
     capture.h \
     buffer.h \
     preview.h \
     fader.h \
-    save.h
+    save.h \
+    load.h \
+    overlay.h
 
 FORMS    += mainwindow.ui \
     input.ui \
     capture.ui \
     preview.ui \
-    fader.ui
+    fader.ui \
+    load.ui \
+    overlay.ui
+
+OTHER_FILES += \
+    README.md

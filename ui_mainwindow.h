@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Sat Nov 9 10:37:05 2013
+** Created: Sat Nov 9 13:27:17 2013
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -33,6 +33,7 @@ public:
     QComboBox *choosePreview;
     QPushButton *faderButton;
     QComboBox *saveBuffer;
+    QPushButton *loadButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -56,6 +57,9 @@ public:
         saveBuffer = new QComboBox(centralWidget);
         saveBuffer->setObjectName(QString::fromUtf8("saveBuffer"));
         saveBuffer->setGeometry(QRect(20, 130, 101, 27));
+        loadButton = new QPushButton(centralWidget);
+        loadButton->setObjectName(QString::fromUtf8("loadButton"));
+        loadButton->setGeometry(QRect(20, 170, 99, 27));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -78,6 +82,7 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Mixer by danman", 0, QApplication::UnicodeUTF8));
         captureButton->setText(QApplication::translate("MainWindow", "Capture...", 0, QApplication::UnicodeUTF8));
         faderButton->setText(QApplication::translate("MainWindow", "Fader...", 0, QApplication::UnicodeUTF8));
+        loadButton->setText(QApplication::translate("MainWindow", "Load image", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

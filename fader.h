@@ -2,6 +2,9 @@
 #define FADER_H
 
 #include <QMainWindow>
+#include <QKeyEvent>
+#include <QRunnable>
+#include <QThreadPool>
 #include "buffer.h"
 #include "unistd.h"
 #include <cmath>
@@ -19,14 +22,16 @@ public:
     ~Fader();
 
     void Init(Buffer* buffer);
-    void setRate(int rate);
+    void setFader(int rate);
+    void setYellow(int next);
+    void setRed(int next);
+    void autofade();
 
 
     
 private:
     Ui::Fader *ui;
     float rate;
-    float rateSup;
     Buffer* buffer;
     void start();
     int pos;
@@ -36,14 +41,17 @@ private:
     void Thread();
     static void * staticEntryPoint(void * c);
 
-    unsigned char* a;
-    unsigned char* b;
-    unsigned char* out;
+    uchar* red;
+    uchar* yel;
+    uchar* out;
 
 private slots:
 
     void controlClicked();
     void controlChanged(int value);
+
+protected:
+    void keyPressEvent(QKeyEvent *);
 
 };
 
