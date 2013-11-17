@@ -10,6 +10,7 @@
 #include "buffer.h"
 #include "save.h"
 #include "load.h"
+#include "overlay.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,6 +33,7 @@ private slots:
     void startPreview(int index);
     void startFader();
     void saveBuffer(int index);
+    void startOverlay();
 
     
 private:

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>176</width>
-    <height>288</height>
+    <height>347</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -71,6 +71,19 @@
     </property>
     <property name="text">
      <string>Load image</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="overlayButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>210</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add overlay</string>
     </property>
    </widget>
   </widget>

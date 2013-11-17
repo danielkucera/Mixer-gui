@@ -11,3 +11,6 @@
 * network capture from HDMI/IP converter
 * Image load
 * alpha layer
+** working with mask array
+** todo colour mask
+* signal slot trigering

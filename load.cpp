@@ -37,10 +37,16 @@ int Load::loadImage(QString fileName, int number){
     if (img.isNull())
         return -1;
 
-    QImage rgb = img.convertToFormat(QImage::Format_RGB888).scaled(buffer->width,buffer->height);
+    QImage scaled = img.scaled(buffer->width,buffer->height);
+
+    QImage alpha = scaled.alphaChannel();
+
+    QImage rgb = scaled.convertToFormat(QImage::Format_RGB888);
 
     fprintf(stderr,"leng %d %p\n", rgb.byteCount(),buffer->Open(number));
 
     memcpy(buffer->Open(number),rgb.bits(),rgb.byteCount());
+    memcpy(buffer->Open(number+1),alpha.bits(),alpha.byteCount());
+
     buffer->frame[number]=-1;
 }

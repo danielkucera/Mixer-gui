@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Sat Nov 9 13:27:17 2013
+** Created: Sun Nov 10 18:18:30 2013
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -34,6 +34,7 @@ public:
     QPushButton *faderButton;
     QComboBox *saveBuffer;
     QPushButton *loadButton;
+    QPushButton *overlayButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -42,7 +43,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(176, 288);
+        MainWindow->resize(176, 347);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         captureButton = new QPushButton(centralWidget);
@@ -60,6 +61,9 @@ public:
         loadButton = new QPushButton(centralWidget);
         loadButton->setObjectName(QString::fromUtf8("loadButton"));
         loadButton->setGeometry(QRect(20, 170, 99, 27));
+        overlayButton = new QPushButton(centralWidget);
+        overlayButton->setObjectName(QString::fromUtf8("overlayButton"));
+        overlayButton->setGeometry(QRect(20, 210, 99, 27));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -83,6 +87,7 @@ public:
         captureButton->setText(QApplication::translate("MainWindow", "Capture...", 0, QApplication::UnicodeUTF8));
         faderButton->setText(QApplication::translate("MainWindow", "Fader...", 0, QApplication::UnicodeUTF8));
         loadButton->setText(QApplication::translate("MainWindow", "Load image", 0, QApplication::UnicodeUTF8));
+        overlayButton->setText(QApplication::translate("MainWindow", "Add overlay", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

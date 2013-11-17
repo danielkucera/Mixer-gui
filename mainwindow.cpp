@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->captureButton, SIGNAL(released()), this, SLOT(startCapture()));
     connect(ui->faderButton, SIGNAL(released()), this, SLOT(startFader()));
     connect(ui->loadButton, SIGNAL(released()), this, SLOT(loadImage()));
+    connect(ui->overlayButton, SIGNAL(released()), this, SLOT(startOverlay()));
 
     //preview
     connect(ui->choosePreview, SIGNAL(currentIndexChanged(int)), this, SLOT(startPreview(int)));
@@ -63,6 +64,14 @@ void MainWindow::startPreview(int index)
     }
     ui->choosePreview->setCurrentIndex(0);
     ui->choosePreview->update();
+}
+
+void MainWindow::startOverlay()
+{
+    Overlay* overlay = new Overlay();
+    overlay->Init(buffer);
+    overlay->show();
+    //overlay->start(buffer, index-1);
 }
 
 void MainWindow::saveBuffer(int index)
