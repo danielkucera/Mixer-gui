@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "buffer.h"
+#include <QColorDialog>
 
 namespace Ui {
 class Overlay;
@@ -27,12 +28,17 @@ private:
     uchar* inputMask;
     uchar* output;
 
+    int method;
+    int color=0;
+    int sensitivity=0xF8F8F8;
+
     Buffer* buffer;
 
     int run;
 
 private slots:
     void setEnabled(int status);
+    void showColorDlg();
 };
 
 #endif // OVERLAY_H
