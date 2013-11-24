@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,7 +23,8 @@ SOURCES += main.cpp\
     fader.cpp \
     save.cpp \
     load.cpp \
-    overlay.cpp
+    overlay.cpp \
+    hdmi.cpp
 
 HEADERS  += mainwindow.h \
     capture.h \
@@ -31,7 +33,8 @@ HEADERS  += mainwindow.h \
     fader.h \
     save.h \
     load.h \
-    overlay.h
+    overlay.h \
+    hdmi.h
 
 FORMS    += mainwindow.ui \
     input.ui \
@@ -39,7 +42,8 @@ FORMS    += mainwindow.ui \
     preview.ui \
     fader.ui \
     load.ui \
-    overlay.ui
+    overlay.ui \
+    hdmi.ui
 
 OTHER_FILES += \
     README.md

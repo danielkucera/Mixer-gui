@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->faderButton, SIGNAL(released()), this, SLOT(startFader()));
     connect(ui->loadButton, SIGNAL(released()), this, SLOT(loadImage()));
     connect(ui->overlayButton, SIGNAL(released()), this, SLOT(startOverlay()));
+    connect(ui->hdmiButton, SIGNAL(released()), this, SLOT(startHDMI()));
 
     //preview
     connect(ui->choosePreview, SIGNAL(currentIndexChanged(int)), this, SLOT(startPreview(int)));
@@ -29,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->saveBuffer->addItem(QString::number(i));
     }
 
-    buffer = new Buffer(1280, 720, 3);
+    buffer = new Buffer(1920, 1080, 3);
 
 }
 
@@ -89,5 +90,13 @@ void MainWindow::startFader()
     Fader* fad = new Fader();
     fad->show();
     fad->Init(buffer);
+
+}
+
+void MainWindow::startHDMI()
+{
+    HDMI* hdmi = new HDMI();
+    hdmi->show();
+    hdmi->Init(buffer);
 
 }

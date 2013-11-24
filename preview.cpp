@@ -107,7 +107,7 @@ void Preview::Thread(){
 //        fprintf(stderr, "output thread started\n");
 
         //usleep(1000*1000/buffer->fps);
-        usleep(1000*1000/10);
+        usleep(1000*1000/30);
 
 //        if (frame[out] != u_frame) {
 //                      usleep(10*1000);

@@ -19,12 +19,9 @@ void Overlay::showColorDlg(){
     QColor selectColor = QColorDialog::getColor(Qt::black, this);
     color = selectColor.red()*65536 + selectColor.green()*256 + selectColor.blue();
 
-    QImage screen = QPixmap::grabWindow(QApplication::desktop()->winId()).toImage();
-
-    QRgb pixel = screen.pixel(0,80);
-
-
-    color = pixel.re *65536 + pixel.green()*256 + pixel.blue();
+    //QImage screen = QPixmap::grabWindow(QApplication::desktop()->winId()).toImage();
+    //QRgb pixel = screen.pixel(0,80);
+    //color = pixel.re *65536 + pixel.green()*256 + pixel.blue();
 
     fprintf(stderr, "color  %x\n",color);
 

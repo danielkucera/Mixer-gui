@@ -11,6 +11,7 @@
 #include "save.h"
 #include "load.h"
 #include "overlay.h"
+#include "hdmi.h"
 
 namespace Ui {
 class MainWindow;
@@ -34,6 +35,7 @@ private slots:
     void startFader();
     void saveBuffer(int index);
     void startOverlay();
+    void startHDMI();
 
     
 private:
