@@ -125,6 +125,7 @@ void * Capture::loop()
 
                     if (read_frame())
                             break;
+
                     /* EAGAIN - continue select loop. */
             }
     }
@@ -686,6 +687,8 @@ void Capture::process_frame(void* inp, int length) {
         //usleep(100000);
         memcpy((void*)output+buf->width*m*3,(void*)tmp_buf+width*m*3,maxW*3);
     }
+
+    emit(buf->newFrame(outnum));
 
     free(tmp_buf);
 }

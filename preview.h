@@ -30,9 +30,13 @@ private:
 
     Buffer* buffer = 0;
     int number;
+    void* input;
 
     FILE *fp;
     bool run;
+
+private slots:
+    void showFrame(int number);
 
 };
 

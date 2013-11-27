@@ -87,7 +87,11 @@ void Preview::start(Buffer *buf, int numbe)
     //std::thread test;
     //test->(Thread);
 
-    pthread_create(&thread, NULL, Preview::staticEntryPoint, this);
+    input = buffer->Open(number);
+
+    connect(buffer,SIGNAL(newFrameSignal(int)),this,SLOT(showFrame(int)));
+
+    //pthread_create(&thread, NULL, Preview::staticEntryPoint, this);
 
 }
 
@@ -97,9 +101,15 @@ void * Preview::staticEntryPoint(void * c)
     return NULL;
 }
 
+void Preview::showFrame(int numbe){
+    if (number==numbe){
+        fwrite(input+0, 1, buffer->buf_len, fp);
+    }
+}
+
 void Preview::Thread(){
 
-    void* input = buffer->Open(number);
+
 
     //printf("output thread started\n");
     while (run) {

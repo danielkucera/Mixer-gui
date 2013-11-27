@@ -37,3 +37,7 @@ void* Buffer::Open(int number){
     }
 
 }
+
+void Buffer::newFrame(int number){
+    emit(newFrameSignal(number));
+}

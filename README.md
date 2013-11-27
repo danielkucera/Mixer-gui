@@ -3,14 +3,13 @@
 * make
 
 # ToDO
-* Preview keep aspect
 * HTTP remote controll
-* MJPEG capture
-* Preview input select
 * Keyboard shortcuts?
 * network capture from HDMI/IP converter
-* Image load
+** multiple sources testing
 * alpha layer
-** working with mask array
+** colour select from screen
+** ARBG?
 ** todo colour mask
 * signal slot trigering
+** implent everywhere
