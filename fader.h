@@ -45,10 +45,11 @@ private:
     uchar* yel;
     uchar* out;
 
-    int input_number;
+    int output_number;
 
 private slots:
 
+    void makeFrame(int number);
     void controlClicked();
     void controlChanged(int value);
 

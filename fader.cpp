@@ -45,18 +45,17 @@ void Fader::keyPressEvent(QKeyEvent* event) {
 
 void Fader::start(){
 
-    input_number=ui->outputSelect->currentIndex();
+    output_number=ui->outputSelect->currentIndex();
 
-    out=(uchar*)buffer->Open(input_number);
+    out=(uchar*)buffer->Open(output_number);
 
     red=(uchar*)buffer->Open(0);
     yel=(uchar*)buffer->Open(0);
 
     rate=0;
 
-    run=1;
+    connect(buffer,SIGNAL(newFrameSignal(int)),this,SLOT(makeFrame(int)));
 
-    pthread_create(&thread, NULL, Fader::staticEntryPoint, this);
 }
 
 void Fader::controlClicked(){
@@ -138,8 +137,6 @@ public: void Init(Fader* rodi, int usleeptim){
 void Fader::autofade(){
     int leng = ui->fadeLength->value();
 
-
-
     HelloWorldTask *bezec = new HelloWorldTask();
     bezec->Init(this, leng/100);
     // QThreadPool takes ownership and deletes 'hello' automatically
@@ -164,49 +161,33 @@ void Fader::Init(Buffer* buf)
 
 }
 
-void * Fader::staticEntryPoint(void * c)
-{
-    ((Fader *) c)->Thread();
-    return NULL;
-}
-
 void Fader::setFader(int rat){
     ui->horizontalSlider->setValue(rat);
 
 }
 
-void Fader::Thread(){
+void Fader::makeFrame(int number){
 
-    int y;
-    int i;
-    pos = buffer->frame[0];
-    float rateSup;
+    if (number == 0){
 
-    while(run){
+        //fprintf(stderr,"rate %f\n",rate);
+        pos=buffer->frame[0];
 
-        if ((pos!=buffer->frame[0]) || (buffer->frame[0]==-1)){
-            //fprintf(stderr,"rate %f\n",rate);
-            pos=buffer->frame[0];
+        if (rate==0) {
 
-            if (rate==0) {
-
-                memcpy(out,red,buffer->buf_len);
-
-            } else {
-                rateSup=1-rate;
-
-                for(i=0; i<buffer->buf_len;i++){
-
-                    out[i] =(rateSup*(float)red[i] + rate*(float)yel[i]) ;
-                }
-
-            }
-
-            buffer->newFrame(input_number);
+            memcpy(out,red,buffer->buf_len);
 
         } else {
-            usleep(10*1000);
+            float rateSup=1-rate;
+
+            for(int i=0; i<buffer->buf_len;i++){
+
+                out[i] =(rateSup*(float)red[i] + rate*(float)yel[i]) ;
+            }
+
         }
+
+        buffer->newFrame(output_number);
     }
 
 }
