@@ -45,7 +45,9 @@ void Fader::keyPressEvent(QKeyEvent* event) {
 
 void Fader::start(){
 
-    out=(uchar*)buffer->Open(ui->outputSelect->currentIndex());
+    input_number=ui->outputSelect->currentIndex();
+
+    out=(uchar*)buffer->Open(input_number);
 
     red=(uchar*)buffer->Open(0);
     yel=(uchar*)buffer->Open(0);
@@ -199,6 +201,8 @@ void Fader::Thread(){
                 }
 
             }
+
+            buffer->newFrame(input_number);
 
         } else {
             usleep(10*1000);

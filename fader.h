@@ -45,6 +45,8 @@ private:
     uchar* yel;
     uchar* out;
 
+    int input_number;
+
 private slots:
 
     void controlClicked();
