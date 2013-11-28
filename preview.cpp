@@ -7,17 +7,13 @@ Preview::Preview(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setAttribute(Qt::WA_DeleteOnClose, true);
-
-    fprintf(stderr,"windid %d\n",ui->previewwidget->winId());
 }
 
 Preview::~Preview()
 {
 
-    run=0;
-    usleep(500*1000);
+    disconnect();
     delete ui;
-    ::fclose(fp);
 
 }
 
@@ -43,99 +39,43 @@ void Preview::resizeEvent(QResizeEvent* event)
        h2 = ui->mainwidget->height();
    }
 
-   ui->previewwidget->setFixedHeight(h2);
-   ui->previewwidget->setFixedWidth(w2);
+   ui->imgLabel->setFixedHeight(h2);
+   ui->imgLabel->setFixedWidth(w2);
 
-   QPoint center = ui->previewwidget->parentWidget()->geometry().center();
+   QPoint center = ui->imgLabel->parentWidget()->geometry().center();
 
    center.setX(center.x()-w2/2);
    center.setY(center.y()-h2/2);
 
-   ui->previewwidget->move(center);
+   ui->imgLabel->move(center);
 }
+
 
 void Preview::start(Buffer *buf, int numbe)
 {
-    fp = NULL;
 
     buffer = buf;
     number = numbe;
 
-    QResizeEvent* salam;
-    resizeEvent(salam);
-
+    QResizeEvent* resize;
+    resizeEvent(resize);
 
     setWindowTitle(QString("Buffer %1").arg(numbe));
-
-//    int u_frame = 0;
-//    int len = Bpp * width * height;
-//    struct buffer output;
-//    output.length = width * height * Bpp;
-//    output.start = malloc(width * height * Bpp);
-
-
-//      fp = fopen("/tmp/preview", "w");
-//      pipe (fp);
-
-    char cmd[300];
-    sprintf(cmd, "mplayer -demuxer rawvideo - -rawvideo w=%d:h=%d:format=rgb24 -wid %d 2>/dev/null >/dev/null",buffer->width,buffer->height, ui->previewwidget->winId());
-
-    fp = popen(cmd, "we");
-
-    run=true;
-
-    //std::thread test;
-    //test->(Thread);
 
     input = buffer->Open(number);
 
     connect(buffer,SIGNAL(newFrameSignal(int)),this,SLOT(showFrame(int)));
 
-    //pthread_create(&thread, NULL, Preview::staticEntryPoint, this);
-
-}
-
-void * Preview::staticEntryPoint(void * c)
-{
-    ((Preview *) c)->Thread();
-    return NULL;
 }
 
 void Preview::showFrame(int numbe){
     if (number==numbe){
-        fwrite(input+0, 1, buffer->buf_len, fp);
+
+        QImage myImage((uchar *)input,buffer->width, buffer->height, QImage::Format_RGB888);
+
+        ui->imgLabel->setPixmap(QPixmap::fromImage(myImage.scaled(ui->imgLabel->width(),ui->imgLabel->height())));
+
     }
 }
 
-void Preview::Thread(){
-
-
-
-    //printf("output thread started\n");
-    while (run) {
-
-//        fprintf(stderr, "output thread started\n");
-
-        //usleep(1000*1000/buffer->fps);
-        usleep(1000*1000/30);
-
-//        if (frame[out] != u_frame) {
-//                      usleep(10*1000);
-//            u_frame = frame[out];
-
-            //          if (fp){
-            //memcpy(output.start, buffers[out].start, len);
-        fwrite(input+0, 1, buffer->buf_len, fp);
-//                      } else {
-            //                  fp = popen("cat > /tmp/kokosy", "w");
-//                      }
-
-            //          printf("*");
-            //          fflush(stdout);
-
-//        } else {
-//            usleep(3000);
-//        }
-    }
-}
 

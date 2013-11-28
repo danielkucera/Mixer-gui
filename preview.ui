@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>Preview</class>
  <widget class="QMainWindow" name="Preview">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>375</width>
+    <height>272</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -430,20 +438,23 @@
    <property name="autoFillBackground">
     <bool>true</bool>
    </property>
-   <widget class="QWidget" name="previewwidget" native="true">
+   <widget class="QLabel" name="imgLabel">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>321</width>
-      <height>241</height>
+      <x>10</x>
+      <y>10</y>
+      <width>351</width>
+      <height>251</height>
      </rect>
     </property>
-    <property name="minimumSize">
-     <size>
-      <width>120</width>
-      <height>80</height>
-     </size>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
