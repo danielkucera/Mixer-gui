@@ -66,6 +66,8 @@ void Preview::start(Buffer *buf, int numbe)
 
     connect(buffer,SIGNAL(newFrameSignal(int)),this,SLOT(showFrame(int)));
 
+    showFrame(number);
+
 }
 
 void Preview::showFrame(int numbe){
