@@ -114,7 +114,7 @@ void Fader::controlChanged(int value){
 
 }
 
-class HelloWorldTask : public QRunnable
+class AutofadeTask : public QRunnable
 {
     Fader* rodic;
     int usleeptime;
@@ -137,7 +137,7 @@ public: void Init(Fader* rodi, int usleeptim){
 void Fader::autofade(){
     int leng = ui->fadeLength->value();
 
-    HelloWorldTask *bezec = new HelloWorldTask();
+    AutofadeTask *bezec = new AutofadeTask();
     bezec->Init(this, leng/100);
     // QThreadPool takes ownership and deletes 'hello' automatically
     QThreadPool::globalInstance()->start(bezec);
