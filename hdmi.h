@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QUdpSocket>
+#include <QRunnable>
+#include <QThreadPool>
 #include "buffer.h"
 
 #include <sys/socket.h>
@@ -35,19 +37,24 @@ private:
 
     int run;
 
-    void* input;
     int offset;
     QImage obraz;
     void* dest;
+    int number;
 
     pthread_t thread;
     static void * staticEntryPoint(void * c);
     void loop();
 
+    void* input;
+    void* temp;
+
 
     QUdpSocket *udpSocket;
 
     QAbstractSocket *allSocket;
+
+    void reinit(QHostAddress host);
 
     int s; /*socketdescriptor*/
 
@@ -55,6 +62,7 @@ private:
 private slots:
     void enableHDMI(int status);
     void process(void* inp,int off);
+    void pktReceive();
 
 signals:
     void imgRdy(void* inp,int off);
