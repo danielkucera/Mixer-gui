@@ -12,6 +12,7 @@
 #include "load.h"
 #include "overlay.h"
 #include "hdmi.h"
+#include "webview.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,15 +30,23 @@ public:
     QString name() const;
 
 private slots:
-    void startCapture();
-    void loadImage();
-    void startPreview(int index);
-    void startFader();
-    void saveBuffer(int index);
-    void startOverlay();
-    void startHDMI();
 
-    
+    void startPreview();
+
+    void saveBuffer();
+
+    void on_actionHDMI_triggered();
+
+    void on_actionLoad_image_triggered();
+
+    void on_actionHTML_page_triggered();
+
+    void on_actionOverlay_triggered();
+
+    void on_actionFader_triggered();
+
+    void on_actionCapture_device_triggered();
+
 private:
     Ui::MainWindow *ui;
 

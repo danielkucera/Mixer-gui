@@ -10,93 +10,85 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->setAttribute(Qt::WA_DeleteOnClose, true);
 
-    connect(ui->captureButton, SIGNAL(released()), this, SLOT(startCapture()));
-    connect(ui->faderButton, SIGNAL(released()), this, SLOT(startFader()));
-    connect(ui->loadButton, SIGNAL(released()), this, SLOT(loadImage()));
-    connect(ui->overlayButton, SIGNAL(released()), this, SLOT(startOverlay()));
-    connect(ui->hdmiButton, SIGNAL(released()), this, SLOT(startHDMI()));
-
-    //preview
-    connect(ui->choosePreview, SIGNAL(currentIndexChanged(int)), this, SLOT(startPreview(int)));
-    ui->choosePreview->addItem("Preview...");
     for(int i; i<15; i++){
-        ui->choosePreview->addItem(QString::number(i));
+        QAction* current;
+        QString number = QString("%1").arg(i);
+
+        // previews
+        current = ui->menuPreview->addAction("Buffer "+number);
+        current->setObjectName(number);
+        connect(current,SIGNAL(triggered()),this,SLOT(startPreview()));
+
+        //saves
+        current = ui->menuSave_buffer->addAction("Buffer "+number);
+        current->setObjectName(number);
+        connect(current,SIGNAL(triggered()),this,SLOT(saveBuffer()));
     }
 
-    //save
-    connect(ui->saveBuffer, SIGNAL(currentIndexChanged(int)), this, SLOT(saveBuffer(int)));
-    ui->saveBuffer->addItem("Save...");
-    for(int i; i<15; i++){
-        ui->saveBuffer->addItem(QString::number(i));
-    }
-
-    buffer = new Buffer(1920, 1080, 3);
+    buffer = new Buffer(1920, 1080, 3, 25);
 
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
     exit(0);
+    delete ui;
+
 }
 
-void MainWindow::startCapture()
+void MainWindow::startPreview()
 {
-    Capture* cap = new Capture();
-    cap->show();
-    cap->Init(buffer);
-
+    int index = sender()->objectName().toInt();
+    Preview* prev = new Preview();
+    prev->show();
+    prev->start(buffer, index);
 }
 
-void MainWindow::loadImage()
+void MainWindow::saveBuffer()
+{
+    int index = sender()->objectName().toInt();
+    Save(buffer,index);
+}
+
+void MainWindow::on_actionHDMI_triggered()
+{
+    HDMI* hdmi = new HDMI();
+    hdmi->show();
+    hdmi->Init(buffer);
+}
+
+void MainWindow::on_actionLoad_image_triggered()
 {
     Load* load = new Load();
     load->Init(buffer);
     load->show();
 }
 
-
-void MainWindow::startPreview(int index)
+void MainWindow::on_actionHTML_page_triggered()
 {
-    if (index!=0){
-        Preview* prev = new Preview();
-        prev->show();
-        prev->start(buffer, index-1);
-    }
-    ui->choosePreview->setCurrentIndex(0);
-    ui->choosePreview->update();
+    WebView* zobrazovac = new WebView();
+    zobrazovac->Init(buffer);
+    zobrazovac->show();
+
 }
 
-void MainWindow::startOverlay()
+void MainWindow::on_actionOverlay_triggered()
 {
     Overlay* overlay = new Overlay();
     overlay->Init(buffer);
     overlay->show();
-    //overlay->start(buffer, index-1);
 }
 
-void MainWindow::saveBuffer(int index)
-{
-    if (index!=0){
-        Save(buffer,index-1);
-    }
-
-    ui->saveBuffer->setCurrentIndex(0);
-    ui->saveBuffer->update();
-}
-
-void MainWindow::startFader()
+void MainWindow::on_actionFader_triggered()
 {
     Fader* fad = new Fader();
     fad->show();
     fad->Init(buffer);
-
 }
 
-void MainWindow::startHDMI()
+void MainWindow::on_actionCapture_device_triggered()
 {
-    HDMI* hdmi = new HDMI();
-    hdmi->show();
-    hdmi->Init(buffer);
-
+    Capture* cap = new Capture();
+    cap->show();
+    cap->Init(buffer);
 }

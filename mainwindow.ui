@@ -6,109 +6,65 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>176</width>
-    <height>380</height>
+    <width>338</width>
+    <height>88</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Mixer by danman</string>
   </property>
-  <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="captureButton">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>10</y>
-      <width>101</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Capture...</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="choosePreview">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>50</y>
-      <width>101</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="faderButton">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>90</y>
-      <width>101</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Fader...</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="saveBuffer">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>130</y>
-      <width>101</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="loadButton">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>170</y>
-      <width>99</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Load image</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="overlayButton">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>210</y>
-      <width>99</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Add overlay</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="hdmiButton">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>250</y>
-      <width>99</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>HDMI...</string>
-    </property>
-   </widget>
-  </widget>
+  <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>176</width>
+     <width>338</width>
      <height>25</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <widget class="QMenu" name="menuSave_buffer">
+     <property name="title">
+      <string>Save buffer</string>
+     </property>
+    </widget>
+    <addaction name="menuSave_buffer"/>
+   </widget>
+   <widget class="QMenu" name="menuSource">
+    <property name="title">
+     <string>Source</string>
+    </property>
+    <addaction name="actionCapture_device"/>
+    <addaction name="actionHDMI"/>
+    <addaction name="actionLoad_image"/>
+    <addaction name="actionHTML_page"/>
+   </widget>
+   <widget class="QMenu" name="menuOutput">
+    <property name="title">
+     <string>Output</string>
+    </property>
+    <widget class="QMenu" name="menuPreview">
+     <property name="title">
+      <string>Preview</string>
+     </property>
+    </widget>
+    <addaction name="menuPreview"/>
+   </widget>
+   <widget class="QMenu" name="menuMixing">
+    <property name="title">
+     <string>Mixing</string>
+    </property>
+    <addaction name="actionFader"/>
+    <addaction name="actionOverlay"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuSource"/>
+   <addaction name="menuMixing"/>
+   <addaction name="menuOutput"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -119,6 +75,36 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionCapture_device">
+   <property name="text">
+    <string>Capture device...</string>
+   </property>
+  </action>
+  <action name="actionHDMI">
+   <property name="text">
+    <string>HDMI...</string>
+   </property>
+  </action>
+  <action name="actionLoad_image">
+   <property name="text">
+    <string>Load image...</string>
+   </property>
+  </action>
+  <action name="actionHTML_page">
+   <property name="text">
+    <string>HTML page...</string>
+   </property>
+  </action>
+  <action name="actionFader">
+   <property name="text">
+    <string>Fader...</string>
+   </property>
+  </action>
+  <action name="actionOverlay">
+   <property name="text">
+    <string>Overlay...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
