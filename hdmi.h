@@ -4,14 +4,7 @@
 #include <QMainWindow>
 #include <QUdpSocket>
 #include <QRunnable>
-#include <QThreadPool>
 #include "buffer.h"
-
-#include <sys/socket.h>
-#include <linux/if_packet.h>
-#include <linux/if_ether.h>
-#include <linux/if_arp.h>
-#include <netinet/in.h>
 
 
 namespace Ui {
@@ -32,37 +25,24 @@ private:
 
     Buffer* buffer;
 
-    void* packet_r;
-    uchar packet[1600];
-
-    int run;
-
     int offset;
-    QImage obraz;
     void* dest;
     int number;
-
-    pthread_t thread;
-    static void * staticEntryPoint(void * c);
-    void loop();
 
     void* input;
     void* temp;
 
-
     QUdpSocket *udpSocket;
 
-    QAbstractSocket *allSocket;
-
-    void reinit(QHostAddress host);
-
-    int s; /*socketdescriptor*/
-
+    QByteArray starter_str =  QByteArray::fromHex("5446367A600200000000000303010026000000000234C2");
+    QUdpSocket* reinitSocket;
+    QTimer* reinitClock;
 
 private slots:
     void enableHDMI(int status);
     void process(void* inp,int off);
     void pktReceive();
+    void reinit();
 
 signals:
     void imgRdy(void* inp,int off);
