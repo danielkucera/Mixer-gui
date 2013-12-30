@@ -26,7 +26,7 @@ void HDMI::Init(Buffer* bufin)
 
 HDMI::~HDMI()
 {
-    recvr->stop();
+    ui->enableBox->setEnabled(false);
     delete ui;
 }
 
@@ -56,7 +56,7 @@ void HDMI::enableHDMI(int status){
         connect(recvr,SIGNAL(imageReceived(QByteArray)),this,SLOT(process(QByteArray)));
 
     }else{
-        recvr->stop();
+        delete recvr;
     }
 }
 
