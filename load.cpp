@@ -48,5 +48,7 @@ int Load::loadImage(QString fileName, int number){
     memcpy(buffer->Open(number),rgb.bits(),rgb.byteCount());
     memcpy(buffer->Open(number+1),alpha.bits(),alpha.byteCount());
 
+    buffer->newFrame(number);
+
     buffer->frame[number]=-1;
 }
