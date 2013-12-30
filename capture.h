@@ -1,6 +1,8 @@
 #ifndef CAPTURE_H
 #define CAPTURE_H
 
+#include <QCamera>
+#include <QCameraViewfinder>
 #include <QWidget>
 #include <QDir>
 #include "preview.h"
@@ -46,9 +48,9 @@ private:
     Ui::Capture *ui;
 
     void* out_buf;
+    int run;
     void startCapture();
     void stopCapture();
-    int run;
     int outnum;
     int width;
     int height;

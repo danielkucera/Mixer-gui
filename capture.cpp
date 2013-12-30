@@ -19,8 +19,8 @@ Capture::Capture(QWidget *parent) :
 
 Capture::~Capture()
 {
-    stopCapture();
 
+    ui->enableInput->setChecked(false);
     delete ui;
 }
 
@@ -39,8 +39,6 @@ void Capture::Init(Buffer* bufin)
 }
 
 void Capture::startCapture(){
-
-
 
     outnum = ui->outputNumber->value();
 
@@ -72,13 +70,15 @@ void Capture::stopCapture(){
 
     run=0;
 
-    usleep(200*1000);
+    void* ret;
+
+    pthread_join(thread, &ret);
 
     stop_capturing();
     uninit_device();
     close_device();
 
-    ui->ctrlFrame->setEnabled(true);
+    //ui->ctrlFrame->setEnabled(true);
 
 }
 
@@ -678,15 +678,18 @@ void Capture::process_frame(void* inp, int length) {
     }
 
      //memcpy(buf->Open(2),tmp_buf,640*3*300);
-
+/*
     int maxH = (height<buf->height) ? height : buf->height;
     int maxW = (width<buf->width) ? width : buf->width;
 
     for (int m=0; m < maxH; m++){
-        //fprintf(stderr,"riadok %d\n",m);
-        //usleep(100000);
         memcpy((void*)output+buf->width*m*3,(void*)tmp_buf+width*m*3,maxW*3);
     }
+*/
+    buf->Resample(tmp_buf,width,height,output);
+
+    //QImage tento = QImage(tmp_buf,width,height,QImage::Format_RGB888).scaled(buf->width,buf->height);
+    //memcpy((void*)output,tento.bits(),tento.byteCount());
 
     emit(buf->newFrame(outnum));
 
