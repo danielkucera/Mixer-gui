@@ -1,15 +1,20 @@
 #include "hdmi.h"
 #include "ui_hdmi.h"
 
+
 HDMI::HDMI(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::HDMI)
 {
     ui->setupUi(this);
-
-    this->moveToThread(QApplication::instance()->thread());
+    this->setAttribute(Qt::WA_DeleteOnClose, true);
 
     connect(ui->enableBox, SIGNAL(stateChanged(int)), this, SLOT(enableHDMI(int)));
+
+    QTimer* statusbarClock = new QTimer(this);
+    statusbarClock->start(1000);
+
+    connect(statusbarClock,SIGNAL(timeout()),this,SLOT(updateStatusbar()));
 
 }
 
@@ -21,82 +26,50 @@ void HDMI::Init(Buffer* bufin)
 
 HDMI::~HDMI()
 {
-
+    recvr->stop();
     delete ui;
 }
 
+void HDMI::updateStatusbar(){
 
-void HDMI::reinit(){
+    ui->statusbar->showMessage(QString("%1x%2 %3FPS %4FRM" ).arg(jpg_w).arg(jpg_h).arg(frame_cnt-old_f).arg(frame_cnt));
 
-    reinitSocket->write(starter_str.data(),starter_str.length());
-
+    old_f = frame_cnt;
 }
-
 
 void HDMI::enableHDMI(int status){
     if (status==2){
 
         QHostAddress ip = QHostAddress(ui->ipEdit->text());
 
-        reinitSocket = new QUdpSocket();
-        reinitSocket->connectToHost(ip,48689);
-
-        reinitClock = new QTimer(this);
-        reinitClock->start(500);
-
-        connect(reinitClock,SIGNAL(timeout()),this,SLOT(reinit()));
-
-        udpSocket = new QUdpSocket();
-
-        QThread* thread = new QThread(this);
-        //udpSocket->moveToThread(thread);
-        //QObject::connect(thread, SIGNAL(started()), myObj, SLOT(run()));
-        thread->start();
-
-
-        udpSocket->moveToThread(QApplication::instance()->thread());
-
-        int port = 10500+ip.toIPv4Address()%256;
-
-        qDebug() <<port;
-
-        udpSocket->bind( QHostAddress("0.0.0.0"), port, QUdpSocket::ShareAddress);
-
         number = ui->outputSelect->value();
 
         dest = buffer->Open(number);
 
-        input = malloc(500*1024); //500kb jpeg
-        temp = malloc(500*1024); //500kb jpeg
+        recvr = new Reciever();
+        recvr->start(ip);
 
-        QTimer* recvClock = new QTimer(this);
-        recvClock->start(5);
+        QThread* recvThread = new QThread();
+        recvr->moveToThread(recvThread);
+        recvThread->start();
 
-        //connect(udpSocket,SIGNAL(readyRead()),this,SLOT(pktReceive()));
-
-        //je to smutne ale toto je efektivnejsie
-        connect(recvClock,SIGNAL(timeout()),this,SLOT(pktReceive()));
+        connect(recvr,SIGNAL(imageReceived(QByteArray)),this,SLOT(process(QByteArray)));
 
     }else{
-        udpSocket->close();
-        reinitClock->stop();
-        reinitSocket->close();
+        recvr->stop();
     }
 }
 
 void local_error_exit (jpeg_common_struct* cinfo)
 {
-  char msg[1024];
-  qDebug()<<"sme tu";
-  sprintf (msg, "error_exit: %d", cinfo->err->msg_code);
+  my_error_ptr myerr = (my_error_ptr) cinfo->err;
 
-  // std::cout << "jpeg: local_error_exit: " << msg << std::endl;
-  // You can do something with this error_code if needed
-  //  int error_code = cinfo->err->msg_code;
-  throw 128;
+  (*cinfo->err->output_message) (cinfo);
+
+  longjmp(myerr->setjmp_buffer, 1);
 }
 
-void HDMI::process(void* inp,int off){
+void HDMI::process(QByteArray image){
 
     struct jpeg_decompress_struct cinfo;
     struct my_error_mgr jerr;
@@ -115,7 +88,7 @@ void HDMI::process(void* inp,int off){
 
     jpeg_create_decompress(&cinfo);
 
-    jpeg_mem_src(&cinfo, (uchar*)inp,off);
+    jpeg_mem_src(&cinfo, (uchar*)image.data(),image.length());
 
     (void) jpeg_read_header(&cinfo, TRUE);
 
@@ -139,44 +112,18 @@ void HDMI::process(void* inp,int off){
 
     emit(buffer->newFrame(number));
 
+    frame_cnt++;
+    jpg_w=cinfo.output_width;
+    jpg_h=cinfo.output_height;
+
     (void) jpeg_finish_decompress(&cinfo);
 
     jpeg_destroy_decompress(&cinfo);
-
 
 //    QImage rgb = QImage::fromData((uchar*)inp, off).scaled(buffer->width, buffer->height).convertToFormat(QImage::Format_RGB888);
 //    memcpy(dest,rgb.bits(),rgb.byteCount());
 
 }
 
-void HDMI::pktReceive(){
-
-    while (udpSocket->state()==QAbstractSocket::BoundState && udpSocket->hasPendingDatagrams() ) {
-
-        datagram.resize(udpSocket->pendingDatagramSize());
-
-        udpSocket->readDatagram(datagram.data(), datagram.size());
-
-        int leng = 1020*(uchar)datagram.at(3);
-
-        memcpy(temp + leng, datagram.data()+4,1020);
-
-        if (datagram.at(2)!=0){
-
-            leng+=1020;
-
-            memcpy(input,temp,leng);
-
-            //trosku velmi pomale
-            //QtConcurrent::run(this, &HDMI::process, temp, leng);
-
-            //toto sa stiha ak je pouzity turbojpeg, zatial neriesim, staci to
-            process(temp,leng);
-
-            offset=0;
-        }
-
-    }
-}
 
 

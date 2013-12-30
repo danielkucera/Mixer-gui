@@ -2,15 +2,22 @@
 #define HDMI_H
 
 #include <QMainWindow>
-#include <QUdpSocket>
 #include <QRunnable>
-#include <QtConcurrent/QtConcurrent>
+#include <QThread>
 #include "buffer.h"
+#include "reciever.h"
 
 #define JPEG_LIB_VERSION 80
 #include "jpeglib.h"
 #include <setjmp.h>
 
+struct my_error_mgr {
+  struct jpeg_error_mgr pub;        /* "public" fields */
+
+  jmp_buf setjmp_buffer;    /* for return to caller */
+};
+
+typedef struct my_error_mgr * my_error_ptr;
 
 
 namespace Ui {
@@ -30,38 +37,22 @@ private:
     Ui::HDMI *ui;
 
     Buffer* buffer;
+    Reciever* recvr;
 
-    int offset;
     void* dest;
     int number;
 
-    void* input;
-    void* temp;
+    int frame_cnt=0;
+    int old_f = 0;
+    int jpg_w=0;
+    int jpg_h=0;
 
-    QUdpSocket *udpSocket;
-
-    QByteArray starter_str =  QByteArray::fromHex("5446367A600200000000000303010026000000000234C2");
-    QUdpSocket* reinitSocket;
-    QTimer* reinitClock;
-
-    struct my_error_mgr {
-      struct jpeg_error_mgr pub;        /* "public" fields */
-
-      jmp_buf setjmp_buffer;    /* for return to caller */
-    };
-
-    typedef struct my_error_mgr * my_error_ptr;
-
-     QByteArray datagram;
-
-     void process(void* inp, int off);
-
-     void startSocket(int port);
+    //void local_error_exit (jpeg_common_struct* cinfo);
 
 private slots:
     void enableHDMI(int status);
-    void pktReceive();
-    void reinit();
+    void process(QByteArray image);
+    void updateStatusbar();
 
 signals:
     void imgRdy(void* inp,int off);
