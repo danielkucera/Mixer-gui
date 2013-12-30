@@ -13,6 +13,8 @@ public:
 
     void* Open(int number);
 
+    void Resample(uchar *input, int oldWidth, int oldHeight, uchar *output);
+
     void* start[32];
     int frame[32]={0};
     int width;

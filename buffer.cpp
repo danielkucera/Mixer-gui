@@ -46,3 +46,32 @@ void* Buffer::Open(int number){
 void Buffer::newFrame(int number){
     emit(newFrameSignal(number));
 }
+
+// Perform a basic 'pixel' enlarging resample.
+void Buffer::Resample(uchar* input, int oldWidth, int oldHeight, uchar* output)
+{
+
+    double scaleWidth =  (double)width / (double)oldWidth;
+    double scaleHeight = (double)height / (double)oldHeight;
+
+    for(int cy = 0; cy < height; cy++)
+    {
+        for(int cx = 0; cx < width; cx++)
+        {
+            int pixel = (cy * (width *3)) + (cx*3);
+            int nearestMatch =  (((int)(cy / scaleHeight) * (oldWidth *3)) + ((int)(cx / scaleWidth) *3) );
+
+            output[pixel    ] =  input[nearestMatch    ];
+            output[pixel + 1] =  input[nearestMatch + 1];
+            output[pixel + 2] =  input[nearestMatch + 2];
+        }
+    }
+
+    //
+//    delete[] _data;
+//    _data = newData;
+ //   _width = width;
+//    _height = height;
+
+//    return true;
+}
