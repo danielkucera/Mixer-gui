@@ -54,14 +54,14 @@ void Fader::start(){
 
     rate=0;
 
-    connect(buffer,SIGNAL(newFrameSignal(int)),this,SLOT(makeFrame(int)));
+    connect(buffer->clock,SIGNAL(timeout()),this,SLOT(makeFrame()));
 
 }
 
 void Fader::controlClicked(){
     QWidget* sndr = (QWidget *)sender();
     QString name = sndr->objectName();
-    fprintf (stderr,"%s sender\n",sndr->objectName().toStdString().c_str());
+    //fprintf (stderr,"%s sender\n",sndr->objectName().toStdString().c_str());
 
     if (name.contains("horizontalSlider") && rate==1){
         QString newRed = QString("red%1").arg(ui->yellowButtons->checkedButton()->objectName().at(3).digitValue());
@@ -81,7 +81,7 @@ void Fader::controlClicked(){
 void Fader::controlChanged(int value){
     QWidget* sndr = (QWidget *)sender();
     QString name = sndr->objectName();
-    fprintf (stderr,"sender:%s value:%d\n",sndr->objectName().toStdString().c_str(), value);
+    //fprintf (stderr,"sender:%s value:%d\n",sndr->objectName().toStdString().c_str(), value);
 
     if(name.contains("horizontalSlider")){
 
@@ -130,7 +130,7 @@ public: void Init(Fader* rodi, int usleeptim){
             usleep(usleeptime*1000);
             rodic->setFader(value);
         }
-        fprintf(stderr,"runable\n");
+        //fprintf(stderr,"runable\n");
     }
 };
 
@@ -145,12 +145,12 @@ void Fader::autofade(){
 }
 
 void Fader::setYellow(int next){
-    fprintf(stderr,"setting %d\n",next);
+    //fprintf(stderr,"setting %d\n",next);
     yel = (uchar*) buffer->Open(next);
 }
 
 void Fader::setRed(int next){
-    fprintf(stderr,"setting %d\n",next);
+    //fprintf(stderr,"setting %d\n",next);
     red = (uchar*) buffer->Open(next);
 
 }
@@ -166,28 +166,25 @@ void Fader::setFader(int rat){
 
 }
 
-void Fader::makeFrame(int number){
+void Fader::makeFrame(){
 
-    if (number == 0){
+    //fprintf(stderr,"rate %f\n",rate);
+    pos=buffer->frame[0];
 
-        //fprintf(stderr,"rate %f\n",rate);
-        pos=buffer->frame[0];
+    if (rate==0) {
 
-        if (rate==0) {
+        memcpy(out,red,buffer->buf_len);
 
-            memcpy(out,red,buffer->buf_len);
+    } else {
+        float rateSup=1-rate;
 
-        } else {
-            float rateSup=1-rate;
+        for(int i=0; i<buffer->buf_len;i++){
 
-            for(int i=0; i<buffer->buf_len;i++){
-
-                out[i] =(rateSup*(float)red[i] + rate*(float)yel[i]) ;
-            }
-
+            out[i] =(rateSup*(float)red[i] + rate*(float)yel[i]) ;
         }
 
-        buffer->newFrame(output_number);
     }
+
+    buffer->newFrame(output_number);
 
 }

@@ -49,7 +49,7 @@ private:
 
 private slots:
 
-    void makeFrame(int number);
+    void makeFrame();
     void controlClicked();
     void controlChanged(int value);
 
