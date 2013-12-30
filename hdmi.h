@@ -4,7 +4,13 @@
 #include <QMainWindow>
 #include <QUdpSocket>
 #include <QRunnable>
+#include <QtConcurrent/QtConcurrent>
 #include "buffer.h"
+
+#define JPEG_LIB_VERSION 80
+#include "jpeglib.h"
+#include <setjmp.h>
+
 
 
 namespace Ui {
@@ -38,9 +44,22 @@ private:
     QUdpSocket* reinitSocket;
     QTimer* reinitClock;
 
+    struct my_error_mgr {
+      struct jpeg_error_mgr pub;        /* "public" fields */
+
+      jmp_buf setjmp_buffer;    /* for return to caller */
+    };
+
+    typedef struct my_error_mgr * my_error_ptr;
+
+     QByteArray datagram;
+
+     void process(void* inp, int off);
+
+     void startSocket(int port);
+
 private slots:
     void enableHDMI(int status);
-    void process(void* inp,int off);
     void pktReceive();
     void reinit();
 
