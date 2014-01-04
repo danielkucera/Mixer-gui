@@ -20,6 +20,12 @@ Buffer::Buffer(int widt, int heigh, int bp, int fp)
     clock = new QTimer(this);
     clock->start(1000/fps);
 
+    connect(clock,SIGNAL(timeout()),this,SLOT(incFrame()));
+
+}
+
+void Buffer::incFrame(){
+    frames++;
 }
 
 void* Buffer::Open(int number){

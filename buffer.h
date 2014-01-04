@@ -24,10 +24,15 @@ public:
     int buf_len;
     void newFrame(int number);
 
+    int frames=0;
+
     QTimer *clock;
 
 private:
     int isopen[32];
+
+private slots:
+    void incFrame();
 
 
 signals:
