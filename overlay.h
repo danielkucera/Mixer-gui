@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include "buffer.h"
 #include <QColorDialog>
+#include <QDesktopWidget>
+#include <QScreen>
+#include <QMouseEvent>
 
 namespace Ui {
 class Overlay;
@@ -18,7 +21,7 @@ public:
     ~Overlay();
 
     void Init(Buffer* buf);
-    void processFrame();
+
     
 private:
     Ui::Overlay *ui;
@@ -29,16 +32,29 @@ private:
     uchar* output;
 
     int method;
-    int color=0;
-    int sensitivity=0xF8F8F8;
+    QColor color;
+    int sensitivity=1;
+
+    int outNumber;
 
     Buffer* buffer;
 
     int run;
 
+    void setColor(QColor farba);
+
+    void mouseReleaseEvent(QMouseEvent *e);
+    QColor grabScreenColor(const QPoint &p);
+
+    bool screenColorPicking=true;
+
 private slots:
     void setEnabled(int status);
+    void setSensitivity(int newSens);
     void showColorDlg();
+    void pickScreenColor();
+    void processFrame();
+
 };
 
 #endif // OVERLAY_H
