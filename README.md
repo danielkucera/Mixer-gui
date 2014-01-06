@@ -1,5 +1,5 @@
 # INSTALATION
-* sudo apt-get install libqt4-dev mplayer
+* sudo apt-get install libqt4-dev libvips libvips-dev libjpeg-turbo-dev
 * make
 
 # ToDO

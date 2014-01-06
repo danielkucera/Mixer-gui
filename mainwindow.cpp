@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(current,SIGNAL(triggered()),this,SLOT(saveBuffer()));
     }
 
-    buffer = new Buffer(1920, 1080, 3, 25);
+    buffer = new Buffer(1920, 1080, 4, 25);
 
 }
 
@@ -91,4 +91,12 @@ void MainWindow::on_actionCapture_device_triggered()
     Capture* cap = new Capture();
     cap->show();
     cap->Init(buffer);
+}
+
+void MainWindow::on_actionExternal_triggered()
+{
+    ExternalOutput* ext = new ExternalOutput();
+    ext->show();
+    ext->Init(buffer);
+
 }

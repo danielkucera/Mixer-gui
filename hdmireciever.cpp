@@ -1,4 +1,4 @@
-#include "reciever.h"
+#include "hdmireciever.h"
 
 Reciever::Reciever(QObject *parent) :
     QObject(parent)

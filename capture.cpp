@@ -62,7 +62,7 @@ void Capture::startCapture(){
 //    }
 
     //potom nakoniec toto
-    ui->ctrlFrame->setEnabled(false);
+    //ui->ctrlFrame->setEnabled(false);
 
 }
 
@@ -665,13 +665,16 @@ void Capture::process_frame(void* inp, int length) {
         if (g2 < 0) g2 = 0;
         if (b2 < 0) b2 = 0;
 
-        tmp_buf[i*6] = r1;
-        tmp_buf[i*6+1] = g1;
-        tmp_buf[i*6+2] = b1;
 
-        tmp_buf[i*6+3] = r2;
-        tmp_buf[i*6+4] = g2;
-        tmp_buf[i*6+5] = b2;
+        tmp_buf[i*8] = b1; //B
+        tmp_buf[i*8+1] = g1; //G
+        tmp_buf[i*8+2] = r1; //R
+        tmp_buf[i*8+3] = 255; //A
+
+        tmp_buf[i*8+4] = b2;
+        tmp_buf[i*8+5] = g2;
+        tmp_buf[i*8+6] = r2;
+        tmp_buf[i*8+7] = 255;
 
 
 
@@ -682,8 +685,8 @@ void Capture::process_frame(void* inp, int length) {
     int maxH = (height<buf->height) ? height : buf->height;
     int maxW = (width<buf->width) ? width : buf->width;
 
-    for (int m=0; m < maxH; m++){
-        memcpy((void*)output+buf->width*m*3,(void*)tmp_buf+width*m*3,maxW*3);
+    for (int riadok=0; riadok < maxH; riadok++){
+        memcpy((void*)output+buf->width*riadok*4,(void*)tmp_buf+width*riadok*4,maxW*4);
     }
 */
     buf->Resample(tmp_buf,width,height,output);

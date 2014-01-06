@@ -4,15 +4,18 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core gui
 QT += network
+QT += webkit webkitwidgets
+QT += multimedia multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Mixer
 TEMPLATE = app
-QMAKE_CXXFLAGS=-std=c++11
+QMAKE_CXXFLAGS=-std=c++11 -O2
 
+LIBS += -lturbojpeg
 
 
 SOURCES += main.cpp\
@@ -24,7 +27,11 @@ SOURCES += main.cpp\
     save.cpp \
     load.cpp \
     overlay.cpp \
-    hdmi.cpp
+    hdmi.cpp \
+    webview.cpp \
+    overlayworker.cpp \
+    hdmireciever.cpp \
+    externaloutput.cpp
 
 HEADERS  += mainwindow.h \
     capture.h \
@@ -34,7 +41,11 @@ HEADERS  += mainwindow.h \
     save.h \
     load.h \
     overlay.h \
-    hdmi.h
+    hdmi.h \
+    webview.h \
+    overlayworker.h \
+    hdmireciever.h \
+    externaloutput.h
 
 FORMS    += mainwindow.ui \
     input.ui \
@@ -43,7 +54,9 @@ FORMS    += mainwindow.ui \
     fader.ui \
     load.ui \
     overlay.ui \
-    hdmi.ui
+    hdmi.ui \
+    webview.ui \
+    externaloutput.ui
 
 OTHER_FILES += \
     README.md

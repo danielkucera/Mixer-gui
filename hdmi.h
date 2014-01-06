@@ -5,7 +5,7 @@
 #include <QRunnable>
 #include <QThread>
 #include "buffer.h"
-#include "reciever.h"
+#include "hdmireciever.h"
 
 #define JPEG_LIB_VERSION 80
 #include "jpeglib.h"

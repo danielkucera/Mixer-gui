@@ -64,12 +64,15 @@ void Buffer::Resample(uchar* input, int oldWidth, int oldHeight, uchar* output)
     {
         for(int cx = 0; cx < width; cx++)
         {
-            int pixel = (cy * (width *3)) + (cx*3);
-            int nearestMatch =  (((int)(cy / scaleHeight) * (oldWidth *3)) + ((int)(cx / scaleWidth) *3) );
+            int pixel = (cy * (width *4)) + (cx*4);
+            int nearestMatch =  (((int)(cy / scaleHeight) * (oldWidth *4)) + ((int)(cx / scaleWidth) *4) );
 
+            memcpy(&output[pixel],&input[nearestMatch],3);
+/*
             output[pixel    ] =  input[nearestMatch    ];
             output[pixel + 1] =  input[nearestMatch + 1];
             output[pixel + 2] =  input[nearestMatch + 2];
+                    */
         }
     }
 

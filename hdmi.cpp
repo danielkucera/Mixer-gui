@@ -94,6 +94,8 @@ void HDMI::process(QByteArray image){
 
     cinfo.dct_method = JDCT_FASTEST;
     cinfo.two_pass_quantize = FALSE;
+    //cinfo.out_color_space = JCS_EXT_RGBA;
+    cinfo.out_color_space = JCS_EXT_BGRA;
 
     (void) jpeg_start_decompress(&cinfo);
 

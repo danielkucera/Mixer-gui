@@ -7,6 +7,7 @@ WebView::WebView(QWidget *parent) :
     ui(new Ui::WebView)
 {
     ui->setupUi(this);
+    this->setAttribute(Qt::WA_DeleteOnClose, true);
 
 //    view = new QWebView(ui->label);
 //    view = new QWebView(parent);
@@ -33,7 +34,7 @@ void WebView::loadFile(){
     QString fileName = QFileDialog::getOpenFileName(this,
             tr("Load image"), "",
             tr("All Files (*)"));
-    loadPage(fileName);
+    loadPage("file://"+fileName);
 }
 
 void WebView::loadUrl(){
@@ -42,34 +43,62 @@ void WebView::loadUrl(){
 
 void WebView::loadPage(QString url){
 
-    view->setRenderHints(0);
+    qDebug()<< "loading "<<url;
 
-    view->load(QUrl(url));
+    //view->setRenderHints(0);
+
+    //view->load(QUrl(url));
+
+    //page = new QWebPage;
+
+    page.mainFrame()->load(url);
 
 //    view->setFixedSize(110,110);
 //    view->set
-    view->show();
+    //view->show();
 
     outNumber = ui->outNumber->value();
 
     output = buffer->Open(outNumber);
 
-//    connect(buffer->clock,SIGNAL(timeout()),this,SLOT(newFrame()));
-    connect(view->page(),SIGNAL(repaintRequested(const QRect)),this,SLOT(newFrame()));
+    painter = new QPainter();
+
+    page.setViewportSize(QSize(buffer->width,buffer->height));
+
+    rgb = new QImage(buffer->width,buffer->height, QImage::Format_ARGB32);
+
+    //view->setFixedSize(buffer->width,buffer->height);
+
+    //page->setViewportSize(QSize(buffer->width,buffer->height));
+
+    painter->begin(rgb);
+
+    page.mainFrame()->render(painter);
+
+    //connect(buffer->clock,SIGNAL(timeout()),this,SLOT(newFrame()));
+    connect(&page,SIGNAL(repaintRequested(const QRect)),this,SLOT(newFrame(const QRect)));
+
+    connect(&page,SIGNAL(loadFinished(bool)),this,SLOT(pageRender(bool)));
 
 }
 
-void WebView::newFrame(){
+void WebView::pageRender(bool status){
+    newFrame(QRect(0,0,buffer->width,buffer->height));
+}
 
-    //qDebug()<< "nieco\n";
+void WebView::newFrame(QRect area){
 
-    //QImage rgb = QPixmap::grabWidget(view).toImage().copy(0,0,buffer->width,buffer->height).convertToFormat(QImage::Format_RGB888);
-    QImage rgb = QPixmap::grabWidget(view).toImage().scaled(buffer->width,buffer->height).convertToFormat(QImage::Format_RGB888);
+    static int last=0;
 
-    memcpy(output,rgb.bits(),rgb.byteCount());
+    if (buffer->frames>last){
+        last=buffer->frames;
 
-    buffer->newFrame(outNumber);
+        page.mainFrame()->render(painter,area);
 
+        memcpy(output,rgb->bits(),rgb->byteCount());
+
+        buffer->newFrame(outNumber);
+    }
 }
 
 /*

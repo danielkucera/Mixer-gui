@@ -73,7 +73,7 @@ void Preview::start(Buffer *buf, int numbe)
 void Preview::showFrame(int numbe){
     if (number==numbe){
 
-        QImage myImage((uchar *)input,buffer->width, buffer->height, QImage::Format_RGB888);
+        QImage myImage((uchar *)input,buffer->width, buffer->height, QImage::Format_RGB32);
 
         ui->imgLabel->setPixmap(QPixmap::fromImage(myImage.scaled(ui->imgLabel->width(),ui->imgLabel->height())));
 

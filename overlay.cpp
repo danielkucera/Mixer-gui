@@ -21,42 +21,37 @@ void Overlay::Init(Buffer *buf){
 }
 
 void Overlay::setSensitivity(int newSens){
-    sensitivity = newSens;
-    qDebug() << "sensit" << sensitivity;
+    worker->setSensitivity(newSens);
+    qDebug() << "sensit" << newSens;
 }
 
 void Overlay::setEnabled(int status){
     if (status==2){
-//        startWorker();
-        inputA = (uchar*)buffer->Open(ui->inputA->value());
-        inputOver = (uchar*)buffer->Open(ui->inputOver->value());
 
-        sensitivity = ui->sensSlider->value();
+        worker = new OverlayWorker();
 
-        fprintf(stderr, "sensi  %x\n",sensitivity);
+        QThread* workThread = new QThread();
+        worker->moveToThread(workThread);
+        workThread->start();
 
         if (ui->radioArray->isChecked()){ //mask from array
-            method=0;
-            inputMask = (uchar*)buffer->Open(ui->inputOver->value()+1);
+            worker->setMethod(0);
+
         } else {
-            method=1;
+            worker->setMethod(1);
         }
 
-        outNumber = ui->outputNumber->value();
-
-        output = (uchar*)buffer->Open(outNumber);
-
-        connect(buffer->clock,SIGNAL(timeout()),this,SLOT(processFrame()));
+        worker->start(buffer, ui->outputNumber->value(), ui->inputA->value(), ui->inputOver->value());
 
     } else {
-        disconnect(buffer->clock,SIGNAL(timeout()),this,SLOT(processFrame()));
+
+        delete worker;
+
     }
 }
 
 
 void Overlay::setColor(QColor farba){
-
-    color = farba;
 
     QPalette paleta;
 
@@ -66,7 +61,10 @@ void Overlay::setColor(QColor farba){
 
     ui->colorFrame->update();
 
-    qDebug()<< "color" << color;
+    qDebug()<< "color" << farba;
+
+    worker->setColor(farba);
+
 }
 
 
@@ -113,42 +111,8 @@ void Overlay::mouseReleaseEvent(QMouseEvent *e)
     }
 }
 
-void Overlay::processFrame(){
-
-    int red = color.red();
-    int green = color.green();
-    int blue = color.blue();
-
-    if (method==0){
-        for (int i=0; i < buffer->buf_len; i++){
-
-            output[i]=inputA[i]*(1-(float)inputMask[i/3]/255) + inputOver[i]*(float)inputMask[i/3]/255;
-        }
-    } else {
-
-        memcpy(output, inputA , buffer->buf_len);
-
-            for (int i=0; i < buffer->buf_len; i+=3){
-
-                //ptr=;
-
-                if ((qAbs(red-inputOver[i]) > sensitivity) || (qAbs(green-inputOver[i+1]) > sensitivity) || (qAbs(blue-inputOver[i+2]) > sensitivity)){
-                    memcpy(&output[i], &inputOver[i] , 3);
-                }
-
-                ////memcpy(pixel*+1,inputOver[i],3);
-                //pixel=qAbs(color.red()-inputOver[i]) + qAbs(color.green()-inputOver[i+1]) + qAbs(color.blue()-inputOver[i+2]);
-                //uchar* src = (pixel<sensitivity) ? &inputA[i] : &inputOver[i];
-                //memcpy(&output[i], src , 3);
-
-            }
-        }
-
-        buffer->newFrame(outNumber);
-}
-
 Overlay::~Overlay()
 {
-    run = 0;
+    delete worker;
     delete ui;
 }

@@ -13,6 +13,7 @@
 #include "overlay.h"
 #include "hdmi.h"
 #include "webview.h"
+#include "externaloutput.h"
 
 namespace Ui {
 class MainWindow;
@@ -46,6 +47,8 @@ private slots:
     void on_actionFader_triggered();
 
     void on_actionCapture_device_triggered();
+
+    void on_actionExternal_triggered();
 
 private:
     Ui::MainWindow *ui;

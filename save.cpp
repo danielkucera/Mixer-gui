@@ -13,7 +13,7 @@ Save::Save(Buffer* buf, int index)
     outfile.close();
 
     sprintf (filename, "buffer%d-%ld.png", index, now);
-    QImage img((uchar *)buf->Open(index),buf->width, buf->height, QImage::Format_RGB888);
+    QImage img((uchar *)buf->Open(index),buf->width, buf->height, QImage::Format_ARGB32);
     img.save(filename);
 
 

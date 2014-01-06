@@ -53,6 +53,7 @@
      </property>
     </widget>
     <addaction name="menuPreview"/>
+    <addaction name="actionExternal"/>
    </widget>
    <widget class="QMenu" name="menuMixing">
     <property name="title">
@@ -103,6 +104,11 @@
   <action name="actionOverlay">
    <property name="text">
     <string>Overlay...</string>
+   </property>
+  </action>
+  <action name="actionExternal">
+   <property name="text">
+    <string>External...</string>
    </property>
   </action>
  </widget>

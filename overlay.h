@@ -7,6 +7,8 @@
 #include <QDesktopWidget>
 #include <QScreen>
 #include <QMouseEvent>
+#include <overlayworker.h>
+#include <QThread>
 
 namespace Ui {
 class Overlay;
@@ -26,34 +28,22 @@ public:
 private:
     Ui::Overlay *ui;
 
-    uchar* inputA;
-    uchar* inputOver;
-    uchar* inputMask;
-    uchar* output;
-
-    int method;
-    QColor color;
-    int sensitivity=1;
-
-    int outNumber;
+    OverlayWorker* worker;
 
     Buffer* buffer;
-
-    int run;
-
-    void setColor(QColor farba);
 
     void mouseReleaseEvent(QMouseEvent *e);
     QColor grabScreenColor(const QPoint &p);
 
     bool screenColorPicking=true;
 
+    void setColor(QColor farba);
+
 private slots:
     void setEnabled(int status);
     void setSensitivity(int newSens);
     void showColorDlg();
     void pickScreenColor();
-    void processFrame();
 
 };
 
