@@ -30,6 +30,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
+void MainWindow::changeEvent(QEvent *e)
+{
+    if(e->type() == QEvent::ActivationChange){
+        foreach (QWindow *wind, QApplication::allWindows()) {
+            wind->raise();
+        }
+    }
+}
+
 MainWindow::~MainWindow()
 {
     exit(0);

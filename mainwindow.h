@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QSlider>
+#include <QWindow>
 #include "capture.h"
 #include "preview.h"
 #include "fader.h"
@@ -29,6 +30,7 @@ public:
 
     void setName(const QString &name);
     QString name() const;
+    void changeEvent(QEvent *e);
 
 private slots:
 
