@@ -30,8 +30,8 @@ void PIPWorker::processFrame(){
 
     memcpy(output, inputBack, buffer->buf_len);
 
-    for (int y = 0; y < scaleH; y++){
-        for (int x = 0; x < scaleW; x++){
+    for (int y = 0; y < scaleH && y + offsetY < buffer->height; y++){
+        for (int x = 0; x < scaleW && x + offsetX < buffer->width; x++){
             output[(y + offsetY) * 4 * buffer->width + (x + offsetX) * 4] = inputPIP[ (int)(y * scale) * 4 * buffer->width + (int)(x * scale) * 4];
             output[(y + offsetY) * 4 * buffer->width + (x + offsetX) * 4 + 1] = inputPIP[ (int)(y * scale) * 4 * buffer->width + (int)(x * scale) * 4 + 1];
             output[(y + offsetY) * 4 * buffer->width + (x + offsetX) * 4 + 2] = inputPIP[ (int)(y * scale) * 4 * buffer->width + (int)(x * scale) * 4 + 2];
