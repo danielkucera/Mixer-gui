@@ -71,6 +71,11 @@ void local_error_exit (jpeg_common_struct* cinfo)
 
 void HDMI::process(QByteArray image){
 
+        std::ofstream outfile;
+    outfile.open ("/tmp/filename.jpg");
+    outfile.write (image.data(),image.length());
+    outfile.close();
+
     struct jpeg_decompress_struct cinfo;
     struct my_error_mgr jerr;
 

@@ -7,6 +7,8 @@
 #include "buffer.h"
 #include "hdmireciever.h"
 
+#include <fstream>
+
 #define JPEG_LIB_VERSION 80
 #include "jpeglib.h"
 #include <setjmp.h>

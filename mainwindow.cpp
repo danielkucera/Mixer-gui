@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setAttribute(Qt::WA_DeleteOnClose, true);
+    menuBar()->setNativeMenuBar(false);
 
     for(int i; i<15; i++){
         QAction* current;
@@ -25,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(current,SIGNAL(triggered()),this,SLOT(saveBuffer()));
     }
 
-    buffer = new Buffer(1920, 1080, 4, 25);
+    buffer = new Buffer(1280, 720, 4, 25);
 
 }
 

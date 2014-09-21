@@ -40,6 +40,7 @@ void Reciever::reinit(){
 
 
 void Reciever::processIncomingData() {
+    int chunk;
 
     while (udpSocket->state()==QAbstractSocket::BoundState && udpSocket->hasPendingDatagrams() ) {
 
@@ -47,11 +48,22 @@ void Reciever::processIncomingData() {
 
         udpSocket->readDatagram(datagram.data(), datagram.size());
 
-        int leng = 1020*(uchar)datagram.at(3);
+        if (datagram.at(2)<0){
+            chunk = (uchar)datagram.at(3) + 256*((uchar)datagram.at(2) - 128);
+        } else {
+            chunk = (uchar)datagram.at(3) + 256*((uchar)datagram.at(2));
+
+        }
+
+        //qDebug() << chunk;
+
+        int leng = 1020*chunk;
 
         memcpy(temp + leng, datagram.data()+4,1020);
 
-        if (datagram.at(2)!=0){
+        //qDebug()<< datagram.at(2)+0;
+
+        if (datagram.at(2)<0){
 
             leng+=1020;
 
