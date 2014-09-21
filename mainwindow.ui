@@ -61,6 +61,7 @@
     </property>
     <addaction name="actionFader"/>
     <addaction name="actionOverlay"/>
+    <addaction name="actionPIP"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSource"/>
@@ -109,6 +110,11 @@
   <action name="actionExternal">
    <property name="text">
     <string>External...</string>
+   </property>
+  </action>
+  <action name="actionPIP">
+   <property name="text">
+    <string>PIP...</string>
    </property>
   </action>
  </widget>

@@ -15,6 +15,7 @@
 #include "hdmi.h"
 #include "webview.h"
 #include "externaloutput.h"
+#include "pip.h"
 
 namespace Ui {
 class MainWindow;
@@ -51,6 +52,8 @@ private slots:
     void on_actionCapture_device_triggered();
 
     void on_actionExternal_triggered();
+
+    void on_actionPIP_triggered();
 
 private:
     Ui::MainWindow *ui;

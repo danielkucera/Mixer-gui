@@ -110,3 +110,10 @@ void MainWindow::on_actionExternal_triggered()
     ext->Init(buffer);
 
 }
+
+void MainWindow::on_actionPIP_triggered()
+{
+    PIP* pip = new PIP();
+    pip->show();
+    pip->Init(buffer);
+}
