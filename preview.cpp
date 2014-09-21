@@ -50,6 +50,14 @@ void Preview::resizeEvent(QResizeEvent* event)
    ui->imgLabel->move(center);
 }
 
+void Preview::mouseDoubleClickEvent(QMouseEvent *e) {
+  QWidget::mouseDoubleClickEvent(e);
+  if(isFullScreen()) {
+     this->setWindowState(Qt::WindowNoState);
+  } else {
+     this->setWindowState(Qt::WindowFullScreen);
+  }
+}
 
 void Preview::start(Buffer *buf, int numbe)
 {

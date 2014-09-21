@@ -22,6 +22,7 @@ public:
 private:
     Ui::Preview *ui;
     void resizeEvent(QResizeEvent* event);
+    void mouseDoubleClickEvent(QMouseEvent *e);
 
     Buffer* buffer = 0;
     int number;
