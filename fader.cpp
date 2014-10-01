@@ -23,6 +23,18 @@ Fader::Fader(QWidget *parent) :
 
     connect(ui->fadeButton, SIGNAL(clicked()), this, SLOT(controlClicked()));
 
+
+
+    serialPort.setPortName("/dev/ttyUSB0");
+
+    serialPort.open(QIODevice::WriteOnly);
+
+    int serialPortBaudRate = QSerialPort::Baud9600;
+    serialPort.setBaudRate(serialPortBaudRate);
+    serialPort.setStopBits(QSerialPort::TwoStop);
+
+
+
 }
 
 Fader::~Fader()
@@ -103,14 +115,36 @@ void Fader::controlChanged(int value){
     }
 
     if(name.contains("yellowButtons")){
+        int y = ui->yellowButtons->checkedButton()->objectName().at(3).digitValue();
         //fprintf (stderr,"checked %d\n",ui->buttonGroup_2->checkedButton()->objectName().at(3).digitValue());
-        setYellow(ui->yellowButtons->checkedButton()->objectName().at(3).digitValue());
+        setYellow(y);
+        setLed(y, 0);
     }
 
     if(name.contains("redButtons")){
+        int r = ui->redButtons->checkedButton()->objectName().at(3).digitValue();
         //fprintf (stderr,"checked %d\n",ui->buttonGroup_2->checkedButton()->objectName().at(3).digitValue());
-        setRed(ui->redButtons->checkedButton()->objectName().at(3).digitValue());
+        setRed(r);
+        setLed(r, 1);
     }
+
+}
+
+void Fader::setLed(int val, int color){
+    static int red = 0;
+    static int yel = 0;
+
+    if (color == 0){
+        yel = 1 << (2 * val + 1);
+    } else {
+        red = 1 << (2 * val);
+    }
+
+    int send = yel | red;
+
+    serialPort.putChar(send);
+
+    fprintf (stderr,"r%d y%d send %d\n",red, yel, send);
 
 }
 

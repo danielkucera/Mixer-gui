@@ -8,6 +8,7 @@ QT += core gui
 QT += network
 QT += webkit webkitwidgets
 QT += multimedia multimediawidgets
+QT += serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

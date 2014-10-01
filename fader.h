@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QRunnable>
 #include <QThreadPool>
+#include <QtSerialPort/QSerialPort>
 #include "buffer.h"
 #include "unistd.h"
 #include <cmath>
@@ -41,11 +42,15 @@ private:
     void Thread();
     static void * staticEntryPoint(void * c);
 
+    void setLed(int val, int color);
+
     uchar* red;
     uchar* yel;
     uchar* out;
 
     int output_number;
+
+    QSerialPort serialPort;
 
 private slots:
 

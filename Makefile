@@ -12,13 +12,13 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_NO_DEBUG -DQT_WEBKITWIDGETS_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_PRINTSUPPORT_LIB -DQT_LOCATION_LIB -DQT_MULTIMEDIA_LIB -DQT_QML_LIB -DQT_WEBKIT_LIB -DQT_WIDGETS_LIB -DQT_POSITIONING_LIB -DQT_SENSORS_LIB -DQT_NETWORK_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_NO_DEBUG -DQT_WEBKITWIDGETS_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_OPENGL_LIB -DQT_PRINTSUPPORT_LIB -DQT_LOCATION_LIB -DQT_MULTIMEDIA_LIB -DQT_QML_LIB -DQT_WEBKIT_LIB -DQT_WIDGETS_LIB -DQT_SERIALPORT_LIB -DQT_POSITIONING_LIB -DQT_SENSORS_LIB -DQT_NETWORK_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 CXXFLAGS      = -std=c++11 -O2 -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I. -I/usr/include/qt5 -I/usr/include/qt5/QtWebKitWidgets -I/usr/include/qt5/QtMultimediaWidgets -I/usr/include/qt5/QtQuick -I/usr/include/qt5/QtOpenGL -I/usr/include/qt5/QtPrintSupport -I/usr/include/qt5/QtLocation -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtQml -I/usr/include/qt5/QtWebKit -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtPositioning -I/usr/include/qt5/QtSensors -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I.
+INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I. -I/usr/include/qt5 -I/usr/include/qt5/QtWebKitWidgets -I/usr/include/qt5/QtMultimediaWidgets -I/usr/include/qt5/QtQuick -I/usr/include/qt5/QtOpenGL -I/usr/include/qt5/QtPrintSupport -I/usr/include/qt5/QtLocation -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtQml -I/usr/include/qt5/QtWebKit -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtSerialPort -I/usr/include/qt5/QtPositioning -I/usr/include/qt5/QtSensors -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I.
 LINK          = g++
 LFLAGS        = -Wl,-O1 -Wl,-rpath-link,/usr/lib/x86_64-linux-gnu
-LIBS          = $(SUBLIBS) -lturbojpeg -lQt5WebKitWidgets -L/usr/X11R6/lib64 -L/usr/lib/x86_64-linux-gnu -lQt5MultimediaWidgets -lQt5Quick -lQt5OpenGL -lQt5PrintSupport -lQt5Location -lQt5Multimedia -lQt5Qml -lQt5WebKit -lQt5Widgets -lQt5Positioning -lQt5Sensors -lQt5Network -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -lturbojpeg -lQt5WebKitWidgets -L/usr/X11R6/lib64 -L/usr/lib/x86_64-linux-gnu -lQt5MultimediaWidgets -lQt5Quick -lQt5OpenGL -lQt5PrintSupport -lQt5Location -lQt5Multimedia -lQt5Qml -lQt5WebKit -lQt5Widgets -lQt5SerialPort  -lQt5Positioning -lQt5Sensors -lQt5Network -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
@@ -139,6 +139,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qmltest.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quick.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sensors.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_serialport.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib.pri \
@@ -240,6 +241,7 @@ Makefile: Mixer.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qmltest.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quick.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sensors.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_serialport.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib.pri \
@@ -287,6 +289,7 @@ Makefile: Mixer.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /
 		/usr/lib/x86_64-linux-gnu/libQt5PrintSupport.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Location.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Positioning.prl \
+		/usr/lib/x86_64-linux-gnu/libQt5SerialPort.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Sensors.prl
 	$(QMAKE) -spec linux-g++ -o Makefile Mixer.pro
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf:
@@ -324,6 +327,7 @@ Makefile: Mixer.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qmltest.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quick.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sensors.pri:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_serialport.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib.pri:
@@ -371,6 +375,7 @@ Mixer.pro:
 /usr/lib/x86_64-linux-gnu/libQt5PrintSupport.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Location.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Positioning.prl:
+/usr/lib/x86_64-linux-gnu/libQt5SerialPort.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Sensors.prl:
 qmake: FORCE
 	@$(QMAKE) -spec linux-g++ -o Makefile Mixer.pro
@@ -564,6 +569,9 @@ moc_mainwindow.cpp: /usr/include/qt5/QtWidgets/QMainWindow \
 		/usr/include/qt5/QtCore/QThreadPool \
 		/usr/include/qt5/QtCore/qthreadpool.h \
 		/usr/include/qt5/QtCore/qthread.h \
+		/usr/include/qt5/QtSerialPort/QSerialPort \
+		/usr/include/qt5/QtSerialPort/qserialport.h \
+		/usr/include/qt5/QtSerialPort/qserialportglobal.h \
 		save.h \
 		/usr/include/qt5/QtGui/QImage \
 		load.h \
@@ -617,6 +625,8 @@ moc_mainwindow.cpp: /usr/include/qt5/QtWidgets/QMainWindow \
 		/usr/include/qt5/QtCore/QProcess \
 		/usr/include/qt5/QtCore/qprocess.h \
 		/usr/include/qt5/QtCore/QDebug \
+		pip.h \
+		pipworker.h \
 		mainwindow.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
 
@@ -1060,6 +1070,9 @@ moc_fader.cpp: /usr/include/qt5/QtWidgets/QMainWindow \
 		/usr/include/qt5/QtCore/QThreadPool \
 		/usr/include/qt5/QtCore/qthreadpool.h \
 		/usr/include/qt5/QtCore/qthread.h \
+		/usr/include/qt5/QtSerialPort/QSerialPort \
+		/usr/include/qt5/QtSerialPort/qserialport.h \
+		/usr/include/qt5/QtSerialPort/qserialportglobal.h \
 		buffer.h \
 		/usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/QTimer \
@@ -2414,6 +2427,9 @@ main.o: main.cpp /usr/include/qt5/QtWidgets/QApplication \
 		/usr/include/qt5/QtCore/QThreadPool \
 		/usr/include/qt5/QtCore/qthreadpool.h \
 		/usr/include/qt5/QtCore/qthread.h \
+		/usr/include/qt5/QtSerialPort/QSerialPort \
+		/usr/include/qt5/QtSerialPort/qserialport.h \
+		/usr/include/qt5/QtSerialPort/qserialportglobal.h \
 		save.h \
 		/usr/include/qt5/QtGui/QImage \
 		load.h \
@@ -2465,7 +2481,9 @@ main.o: main.cpp /usr/include/qt5/QtWidgets/QApplication \
 		externaloutput.h \
 		/usr/include/qt5/QtCore/QProcess \
 		/usr/include/qt5/QtCore/qprocess.h \
-		/usr/include/qt5/QtCore/QDebug
+		/usr/include/qt5/QtCore/QDebug \
+		pip.h \
+		pipworker.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 mainwindow.o: mainwindow.cpp mainwindow.h \
@@ -2628,6 +2646,9 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/usr/include/qt5/QtCore/QThreadPool \
 		/usr/include/qt5/QtCore/qthreadpool.h \
 		/usr/include/qt5/QtCore/qthread.h \
+		/usr/include/qt5/QtSerialPort/QSerialPort \
+		/usr/include/qt5/QtSerialPort/qserialport.h \
+		/usr/include/qt5/QtSerialPort/qserialportglobal.h \
 		save.h \
 		/usr/include/qt5/QtGui/QImage \
 		load.h \
@@ -2681,6 +2702,8 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/usr/include/qt5/QtCore/QProcess \
 		/usr/include/qt5/QtCore/qprocess.h \
 		/usr/include/qt5/QtCore/QDebug \
+		pip.h \
+		pipworker.h \
 		ui_mainwindow.h \
 		/usr/include/qt5/QtCore/QVariant \
 		/usr/include/qt5/QtWidgets/QAction \
@@ -3246,6 +3269,9 @@ fader.o: fader.cpp fader.h \
 		/usr/include/qt5/QtCore/QThreadPool \
 		/usr/include/qt5/QtCore/qthreadpool.h \
 		/usr/include/qt5/QtCore/qthread.h \
+		/usr/include/qt5/QtSerialPort/QSerialPort \
+		/usr/include/qt5/QtSerialPort/qserialport.h \
+		/usr/include/qt5/QtSerialPort/qserialportglobal.h \
 		buffer.h \
 		/usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/QTimer \
