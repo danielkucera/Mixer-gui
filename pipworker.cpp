@@ -23,19 +23,29 @@ void PIPWorker::start(Buffer* buf, int outNumbe, int numBack, int numPIP){
     connect(buffer->clock,SIGNAL(timeout()),this,SLOT(processFrame()));
 }
 
+PIPWorker::~PIPWorker(){
+
+    disconnect(buffer->clock,SIGNAL(timeout()),this,SLOT(processFrame()));
+}
+
+
 
 void PIPWorker::processFrame(){
-    scaleW = buffer->width / scale;
-    scaleH = buffer->height / scale;
+    double _scale = scale;
+    int _offsetX = offsetX;
+    int _offsetY = offsetY;
+
+    int scaleW = buffer->width / _scale;
+    int scaleH = buffer->height / _scale;
 
     memcpy(output, inputBack, buffer->buf_len);
 
-    for (int y = 0; y < scaleH && y + offsetY < buffer->height; y++){
-        for (int x = 0; x < scaleW && x + offsetX < buffer->width; x++){
-            output[(y + offsetY) * 4 * buffer->width + (x + offsetX) * 4] = inputPIP[ (int)(y * scale) * 4 * buffer->width + (int)(x * scale) * 4];
-            output[(y + offsetY) * 4 * buffer->width + (x + offsetX) * 4 + 1] = inputPIP[ (int)(y * scale) * 4 * buffer->width + (int)(x * scale) * 4 + 1];
-            output[(y + offsetY) * 4 * buffer->width + (x + offsetX) * 4 + 2] = inputPIP[ (int)(y * scale) * 4 * buffer->width + (int)(x * scale) * 4 + 2];
-            output[(y + offsetY) * 4 * buffer->width + (x + offsetX) * 4 + 3] = inputPIP[ (int)(y * scale) * 4 * buffer->width + (int)(x * scale) * 4 + 3];
+    for (int y = 0; y < scaleH && y + _offsetY < buffer->height; y++){
+        for (int x = 0; x < scaleW && x + _offsetX < buffer->width; x++){
+            output[(y + _offsetY) * 4 * buffer->width + (x + _offsetX) * 4] = inputPIP[ (int)(y * _scale) * 4 * buffer->width + (int)(x * _scale) * 4];
+            output[(y + _offsetY) * 4 * buffer->width + (x + _offsetX) * 4 + 1] = inputPIP[ (int)(y * _scale) * 4 * buffer->width + (int)(x * _scale) * 4 + 1];
+            output[(y + _offsetY) * 4 * buffer->width + (x + _offsetX) * 4 + 2] = inputPIP[ (int)(y * _scale) * 4 * buffer->width + (int)(x * _scale) * 4 + 2];
+            output[(y + _offsetY) * 4 * buffer->width + (x + _offsetX) * 4 + 3] = inputPIP[ (int)(y * _scale) * 4 * buffer->width + (int)(x * _scale) * 4 + 3];
         }
     }
 

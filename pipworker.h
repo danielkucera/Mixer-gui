@@ -10,6 +10,7 @@ class PIPWorker : public QObject
 
 public:
     explicit PIPWorker(QObject *parent = 0);
+    ~PIPWorker();
 
     void setParams(double _scale, int _offsetX, int _offsetY);
     void start(Buffer* buf, int outNumbe, int numBack, int numPIP);
@@ -19,8 +20,6 @@ private:
     double scale;
     int offsetX;
     int offsetY;
-    int scaleH;
-    int scaleW;
 
     uchar* output;
     uchar* inputBack;
