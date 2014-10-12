@@ -117,3 +117,10 @@ void MainWindow::on_actionPIP_triggered()
     pip->show();
     pip->Init(buffer);
 }
+
+void MainWindow::on_actionExternal_2_triggered()
+{
+    ExternalInput* extIn = new ExternalInput();
+    extIn->show();
+    extIn->Init(buffer);
+}

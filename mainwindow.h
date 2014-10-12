@@ -16,6 +16,7 @@
 #include "webview.h"
 #include "externaloutput.h"
 #include "pip.h"
+#include "externalinput.h"
 
 namespace Ui {
 class MainWindow;
@@ -54,6 +55,8 @@ private slots:
     void on_actionExternal_triggered();
 
     void on_actionPIP_triggered();
+
+    void on_actionExternal_2_triggered();
 
 private:
     Ui::MainWindow *ui;

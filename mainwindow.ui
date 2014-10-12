@@ -42,6 +42,7 @@
     <addaction name="actionHDMI"/>
     <addaction name="actionLoad_image"/>
     <addaction name="actionHTML_page"/>
+    <addaction name="actionExternal_2"/>
    </widget>
    <widget class="QMenu" name="menuOutput">
     <property name="title">
@@ -115,6 +116,11 @@
   <action name="actionPIP">
    <property name="text">
     <string>PIP...</string>
+   </property>
+  </action>
+  <action name="actionExternal_2">
+   <property name="text">
+    <string>External...</string>
    </property>
   </action>
  </widget>

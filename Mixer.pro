@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     hdmireciever.cpp \
     externaloutput.cpp \
     pip.cpp \
-    pipworker.cpp
+    pipworker.cpp \
+    externalinput.cpp
 
 HEADERS  += mainwindow.h \
     capture.h \
@@ -50,7 +51,8 @@ HEADERS  += mainwindow.h \
     hdmireciever.h \
     externaloutput.h \
     pip.h \
-    pipworker.h
+    pipworker.h \
+    externalinput.h
 
 FORMS    += mainwindow.ui \
     input.ui \
@@ -62,7 +64,8 @@ FORMS    += mainwindow.ui \
     hdmi.ui \
     webview.ui \
     externaloutput.ui \
-    pip.ui
+    pip.ui \
+    externalinput.ui
 
 OTHER_FILES += \
     README.md
