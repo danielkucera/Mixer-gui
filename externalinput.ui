@@ -87,6 +87,11 @@
       <string>avconv -i rtsp://10.0.0.152:8086 -max_delay 0 -s %1x%2 -pix_fmt rgb32 -f rawvideo -</string>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string>avconv -f mjpeg -i http://10.0.0.152:8085 -max_delay 0 -s %1x%2 -pix_fmt rgb32 -f rawvideo -</string>
+     </property>
+    </item>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
