@@ -1,5 +1,5 @@
 # INSTALATION
-* sudo apt-get install libqt4-dev libvips libvips-dev libjpeg-turbo-dev
+* sudo apt-get install libqt5webkit5-dev qtmultimedia5-dev libqt5serialport5-dev libjpeg-turbo8-dev
 * make
 
 # ToDO
