@@ -29,7 +29,7 @@ private:
     void* input;
 
 private slots:
-    void showFrame(int number);
+    void showFrame();
 
 };
 

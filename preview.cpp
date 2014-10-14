@@ -72,20 +72,16 @@ void Preview::start(Buffer *buf, int numbe)
 
     input = buffer->Open(number);
 
-    connect(buffer,SIGNAL(newFrameSignal(int)),this,SLOT(showFrame(int)));
-
-    showFrame(number);
+    connect(buffer->clock,SIGNAL(timeout()),this,SLOT(showFrame()));
 
 }
 
-void Preview::showFrame(int numbe){
-    if (number==numbe){
+void Preview::showFrame(){
 
         QImage myImage((uchar *)input,buffer->width, buffer->height, QImage::Format_RGB32);
 
         ui->imgLabel->setPixmap(QPixmap::fromImage(myImage.scaled(ui->imgLabel->width(),ui->imgLabel->height())));
 
-    }
 }
 
 
