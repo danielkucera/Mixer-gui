@@ -32,19 +32,41 @@ void* Buffer::Open(int number){
 
     fprintf(stderr, "Opening %d\n",number);
 
-    if (isopen[number]==0){
-        //fprintf(stderr, "Trying malloc for %d with buf_len %d\n",number, buf_len);
-        start[number] = malloc(buf_len);
-        memset(start[number],0,buf_len);
-    }
+    if(0){ //use local/shared memory
 
-    if (!start[number]) {
-            fprintf(stderr, "Out of memory for %d\n",number);
-            return 0;
+        if (isopen[number]==0){
+            //fprintf(stderr, "Trying malloc for %d with buf_len %d\n",number, buf_len);
+            start[number] = malloc(buf_len);
+            memset(start[number],0,buf_len);
+        }
+
+        if (!start[number]) {
+                fprintf(stderr, "Out of memory for %d\n",number);
+                return 0;
+        } else {
+
+            isopen[number]=1;
+            return start[number];
+        }
+
     } else {
 
-        isopen[number]=1;
-        return start[number];
+        int shmid;
+        void *shm;
+
+        fprintf(stderr, "Opening %d\n",number);
+
+        if ((shmid = shmget(number + 16000, buf_len, IPC_CREAT | 0666)) < 0) {
+            perror("shmget");
+            return 0;
+        }
+
+        if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
+            perror("shmat");
+            return 0;
+        }
+
+        return shm;
     }
 
 }

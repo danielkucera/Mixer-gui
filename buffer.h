@@ -4,6 +4,8 @@
 #include <QObject>
 #include <cstring>
 #include <QTimer>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 class Buffer : public QObject
 {
