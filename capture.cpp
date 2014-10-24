@@ -273,8 +273,8 @@ void Capture::init_device(void)
         if (1) { //force_format
                 fmt.fmt.pix.width       = buf->width;
                 fmt.fmt.pix.height      = buf->height;
-                //fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;
-                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
+                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+                //fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
                 fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
 
                 if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
@@ -633,7 +633,7 @@ void Capture::process_frame(void* inp, int length) {
 
     uchar* input = (uchar*)inp;
     uchar* output = (uchar*)out_buf;
-    uchar* tmp_buf[width*height*6];
+    uchar tmp_buf[width*height*6];
 
     for (int i=0; i< width*height/2; i++){
 
