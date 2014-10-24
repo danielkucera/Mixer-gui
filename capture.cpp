@@ -196,7 +196,6 @@ void Capture::init_device(void)
         struct v4l2_capability cap;
         struct v4l2_cropcap cropcap;
         struct v4l2_crop crop;
-        struct v4l2_format fmt;
         unsigned int min;
 
         if (-1 == xioctl(fd, VIDIOC_QUERYCAP, &cap)) {
@@ -288,7 +287,25 @@ void Capture::init_device(void)
                         logerr("VIDIOC_G_FMT");
         }
 
-        fprintf(stderr,"pixelformat %d w:%d h:%d buf_len: %d\n",fmt.fmt.pix.pixelformat, fmt.fmt.pix.width, fmt.fmt.pix.height, fmt.fmt.pix.sizeimage);
+        char* pixfmt;
+
+        switch (fmt.fmt.pix.pixelformat){
+
+            case V4L2_PIX_FMT_UYVY:
+                pixfmt = "V4L2_PIX_FMT_UYVY";
+                break;
+            case V4L2_PIX_FMT_YUYV:
+                pixfmt = "V4L2_PIX_FMT_YUYV";
+                break;
+            case V4L2_PIX_FMT_MJPEG:
+                pixfmt = "V4L2_PIX_FMT_MJPEG";
+                break;
+            default:
+                pixfmt = "unknown";
+                break;
+        }
+
+        fprintf(stderr,"pixelformat %s w:%d h:%d buf_len: %d\n", pixfmt, fmt.fmt.pix.width, fmt.fmt.pix.height, fmt.fmt.pix.sizeimage);
 
         width = fmt.fmt.pix.width;
         height = fmt.fmt.pix.height;
@@ -616,24 +633,29 @@ void Capture::process_frame(void* inp, int length) {
 
     uchar* input = (uchar*)inp;
     uchar* output = (uchar*)out_buf;
-    uchar* tmp_buf = (uchar*) malloc(width*height*6);
-//    uchar* tmp_buf = (uchar*)out_buf;
+    uchar* tmp_buf[width*height*6];
 
     for (int i=0; i< width*height/2; i++){
 
-        //YUYV
-        y = input[i*4];
-        u = input[i*4+1];
-        y2 = input[i*4+2];
-        v = input[i*4+3];
 
-        //UYVY
-/*
-        u = input[i*4];
-        y = input[i*4+1];
-        v = input[i*4+2];
-        y2 = input[i*4+3];
-*/
+        if (fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_YUYV){
+
+            //YUYV
+            y = input[i*4];
+            u = input[i*4+1];
+            y2 = input[i*4+2];
+            v = input[i*4+3];
+        } else if (fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_UYVY){
+
+            //UYVY
+            u = input[i*4];
+            y = input[i*4+1];
+            v = input[i*4+2];
+            y2 = input[i*4+3];
+        } else {
+            perror("unknown format\n");
+            return;
+        }
 
         int c = y-16, d = u - 128, e = v - 128;
 
@@ -696,6 +718,5 @@ void Capture::process_frame(void* inp, int length) {
 
     emit(buf->newFrame(outnum));
 
-    free(tmp_buf);
 }
 
