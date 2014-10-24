@@ -79,6 +79,11 @@
     </item>
     <item>
      <property name="text">
+      <string>avconv -f video4linux2 -i /dev/video0 -s %1x%2 -pix_fmt rgb32 -f rawvideo -</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
       <string>avconv -i http://10.0.0.2:9981/stream/channelid/74265269 -s %1x%2 -pix_fmt rgb32 -f rawvideo -</string>
      </property>
     </item>
