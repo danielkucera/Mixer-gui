@@ -135,9 +135,10 @@ void Fader::setLed(int val, int color){
     static int yel = 0;
 
     if (color == 0){
-        yel = 1 << (2 * val + 1);
+        yel = 1 << (2 * val);
     } else {
-        red = 1 << (2 * val);
+        red = 1 << (2 * val + 1);
+
     }
 
     int send = yel | red;
